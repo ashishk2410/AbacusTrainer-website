@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FAQ - Abacus Trainer</title>
-  <meta name="description" content="Frequently Asked Questions about Abacus Trainer - the most advanced abacus practice app powered by AI and gamification.">
+  <meta name="description" content="Frequently Asked Questions about Abacus Trainer - the most advanced abacus practice app powered by AI, featuring Skill Practice mode and operation type selection.">
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -220,6 +220,230 @@
                   <li>Includes varied problem patterns</li>
                   <li>Works completely offline</li>
                 </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skill Practice -->
+        <div class="faq-section">
+          <h2 class="faq-section-title">
+            <i class="fas fa-cogs"></i>
+            Skill Practice Mode
+          </h2>
+          <div class="faq-items">
+            <div class="faq-item">
+              <div class="faq-question">
+                <h3>What is Skill Practice mode?</h3>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="faq-answer">
+                <p>Skill Practice is a unique training mode designed to master abacus fundamentals through sequential number training. It helps build core abacus skills by practicing with adjustment-based number sequences.</p>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <h3>How does Skill Practice work?</h3>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="faq-answer">
+                <p>Skill Practice generates a sequence of numbers based on:</p>
+                <ul>
+                  <li><strong>Start Number</strong>: Randomly generated based on your digit/decimal settings</li>
+                  <li><strong>Adjustment Value</strong>: A positive or negative number you specify (5-15 range)</li>
+                  <li><strong>Target Number</strong>: Calculated based on start number and adjustment</li>
+                  <li><strong>Sequence</strong>: A series of numbers from start to target with the adjustment increment</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <h3>How do I set up Skill Practice?</h3>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="faq-answer">
+                <ol>
+                  <li>On the Practice Setup screen, select "Skill" from the operation type cards</li>
+                  <li>Configure your digit range and decimal points</li>
+                  <li>Set the number of questions (1-5)</li>
+                  <li>Click "Let's Practice" to start</li>
+                  <li>Enter your adjustment value (5-15 or -15 to -5)</li>
+                  <li>Click "Start" to begin your Skill Practice session</li>
+                </ol>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <h3>What's the difference between positive and negative adjustments?</h3>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="faq-answer">
+                <ul>
+                  <li><strong>Positive Adjustment</strong>: Creates an ascending sequence (e.g., start=10, adj=5 → 10, 15, 20, 25, 30)</li>
+                  <li><strong>Negative Adjustment</strong>: Creates a descending sequence (e.g., start=50, adj=-5 → 50, 45, 40, 35, 30)</li>
+                  <li>Both help develop different abacus skills and mental calculation patterns</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <h3>How does the sequential input validation work?</h3>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="faq-answer">
+                <p>Skill Practice uses sequential validation:</p>
+                <ul>
+                  <li>You must input numbers in the correct sequence order</li>
+                  <li>Each input is compared against the expected next number</li>
+                  <li>Correct inputs show a green checkmark (✓)</li>
+                  <li>Incorrect inputs show a red cross (✗)</li>
+                  <li>You can input any number, but only the correct sequence advances</li>
+                  <li>The session completes when you reach the final target number</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <h3>Can I use Skill Practice with decimal numbers?</h3>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="faq-answer">
+                <p>Yes! Skill Practice supports decimal numbers:</p>
+                <ul>
+                  <li>Configure decimal points (1, 2, or 3) in the Practice Setup</li>
+                  <li>Start and target numbers will be generated as decimals</li>
+                  <li>Sequences maintain proper decimal precision</li>
+                  <li>Input validation accounts for floating-point accuracy</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <h3>What happens when I complete a Skill Practice session?</h3>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="faq-answer">
+                <p>Upon completion:</p>
+                <ul>
+                  <li>Your session is automatically saved to the database</li>
+                  <li>You're taken to the Results screen showing your performance</li>
+                  <li>Results include accuracy, time spent, and sequence completion</li>
+                  <li>Progress is tracked in your statistics dashboard</li>
+                  <li>Results are accessible through the regular Results screen</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <h3>Why should I use Skill Practice instead of regular practice?</h3>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="faq-answer">
+                <p>Skill Practice offers unique benefits:</p>
+                <ul>
+                  <li><strong>Fundamental Building</strong>: Develops core abacus calculation patterns</li>
+                  <li><strong>Sequential Thinking</strong>: Improves number sequence recognition</li>
+                  <li><strong>Adjustment Mastery</strong>: Builds confidence with specific increment values</li>
+                  <li><strong>Pattern Recognition</strong>: Helps identify mathematical patterns</li>
+                  <li><strong>Mental Math Foundation</strong>: Strengthens basic arithmetic skills</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Operation Types -->
+        <div class="faq-section">
+          <h2 class="faq-section-title">
+            <i class="fas fa-layer-group"></i>
+            Operation Types & Practice Modes
+          </h2>
+          <div class="faq-items">
+            <div class="faq-item">
+              <div class="faq-question">
+                <h3>What are operation type cards?</h3>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="faq-answer">
+                <p>Operation type cards allow you to choose your preferred practice mode:</p>
+                <ul>
+                  <li><strong>+/- (Add/Sub)</strong>: Traditional addition and subtraction practice</li>
+                  <li><strong>x/÷ (Mul/Div)</strong>: Multiplication and division practice (Coming Soon)</li>
+                  <li><strong>Skill</strong>: Specialized Skill Practice mode for fundamental training</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <h3>Why is Multiplication/Division marked as "Coming Soon"?</h3>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="faq-answer">
+                <p>Multiplication and Division features are currently under development. When you click on the x/÷ card, you'll see a "Coming Soon" dialog explaining that these features will be available in a future update.</p>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <h3>How do I switch between operation types?</h3>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="faq-answer">
+                <p>Simply tap on any of the operation type cards on the Practice Setup screen:</p>
+                <ul>
+                  <li>Tap "+/-" for addition and subtraction practice</li>
+                  <li>Tap "Skill" for Skill Practice mode</li>
+                  <li>Tap "x/÷" to see the Coming Soon message</li>
+                  <li>The selected card will be highlighted in blue</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <h3>Do different operation types have different settings?</h3>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="faq-answer">
+                <p>Yes, operation types affect available settings:</p>
+                <ul>
+                  <li><strong>+/- Mode</strong>: All settings available (AI Power, Auditory, Prompts, etc.)</li>
+                  <li><strong>Skill Mode</strong>: Some settings are disabled (AI Power, Auditory, Prompts per Question, Include Negative, Pattern, Carry)</li>
+                  <li><strong>x/÷ Mode</strong>: Currently unavailable (Coming Soon)</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <h3>Can I use AI Power with all operation types?</h3>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="faq-answer">
+                <p>AI Power availability depends on the operation type:</p>
+                <ul>
+                  <li><strong>+/- Mode</strong>: AI Power available when digit count + decimal count > 1</li>
+                  <li><strong>Skill Mode</strong>: AI Power is disabled (not applicable to Skill Practice)</li>
+                  <li><strong>x/÷ Mode</strong>: Will be available when the feature launches</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <h3>What's the default operation type?</h3>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="faq-answer">
+                <p>The "+/-" (Add/Sub) operation type is selected by default when you open the Practice Setup screen. This provides the most comprehensive practice experience with all features available.</p>
               </div>
             </div>
           </div>
@@ -871,7 +1095,7 @@
       <div class="footer-content">
         <div class="footer-section">
           <h3>Abacus Trainer</h3>
-          <p>The most advanced abacus practice app powered by AI and gamification.</p>
+          <p>The most advanced abacus practice app powered by AI, featuring innovative Skill Practice mode, operation type selection, and comprehensive gamification.</p>
         </div>
         <div class="footer-section">
           <h4>Quick Links</h4>
@@ -905,5 +1129,6 @@
   <script src="script.js"></script>
 </body>
 </html>
+
 
 
