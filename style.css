@@ -145,6 +145,7 @@ a:hover {
 .section-header {
     text-align: center;
     margin-bottom: var(--space-16);
+    padding: 0 var(--space-4);
 }
 
 .section-header h2 {
@@ -405,6 +406,7 @@ a:hover {
     align-items: center;
     overflow: hidden;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: var(--space-20) 0;
 }
 
 .hero-background {
@@ -447,7 +449,7 @@ a:hover {
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
-    padding: var(--space-20) var(--space-4);
+    padding: 0 var(--space-4);
 }
 
 .hero-content {
@@ -561,116 +563,11 @@ a:hover {
     transform: perspective(1000px) rotateY(-10deg) rotateX(2deg);
 }
 
-.phone-screen {
+.phone-image {
     width: 100%;
     height: 100%;
-    background: var(--white);
+    object-fit: cover;
     border-radius: 20px;
-    overflow: hidden;
-    position: relative;
-}
-
-.app-interface {
-    padding: var(--space-6);
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.app-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    margin-bottom: var(--space-6);
-    padding-bottom: var(--space-4);
-    border-bottom: 1px solid var(--gray-200);
-}
-
-.app-logo {
-    font-size: var(--text-2xl);
-}
-
-.app-header h3 {
-    font-size: var(--text-lg);
-    margin: 0;
-    color: var(--gray-900);
-}
-
-.practice-card {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-    color: var(--white);
-    padding: var(--space-6);
-    border-radius: var(--radius-xl);
-    text-align: center;
-}
-
-.practice-card h4 {
-    font-size: var(--text-lg);
-    margin-bottom: var(--space-4);
-    color: var(--white);
-}
-
-.question {
-    font-size: var(--text-2xl);
-    font-weight: 700;
-    margin-bottom: var(--space-4);
-    color: var(--white);
-}
-
-.progress-bar {
-    width: 100%;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: var(--radius-full);
-    margin-bottom: var(--space-4);
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background: var(--white);
-    border-radius: var(--radius-full);
-    transition: width var(--transition-slow);
-}
-
-.stats {
-    display: flex;
-    justify-content: space-between;
-    font-size: var(--text-sm);
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.floating-elements {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-}
-
-.floating-icon {
-    position: absolute;
-    font-size: var(--text-2xl);
-    animation: float 3s ease-in-out infinite;
-}
-
-.floating-icon:nth-child(1) {
-    top: 10%;
-    right: -20px;
-    animation-delay: 0s;
-}
-
-.floating-icon:nth-child(2) {
-    top: 50%;
-    left: -30px;
-    animation-delay: 1s;
-}
-
-.floating-icon:nth-child(3) {
-    bottom: 20%;
-    right: -15px;
-    animation-delay: 2s;
 }
 
 /* Benefits Section */
@@ -683,6 +580,7 @@ a:hover {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: var(--space-8);
+    padding: 0 var(--space-4);
 }
 
 .benefit-card {
@@ -752,6 +650,7 @@ a:hover {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--space-12);
     position: relative;
+    padding: 0 var(--space-4);
 }
 
 .step {
@@ -828,6 +727,7 @@ a:hover {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--space-8);
     margin-bottom: var(--space-16);
+    padding: 0 var(--space-4);
 }
 
 .feature-card {
@@ -875,6 +775,7 @@ a:hover {
     padding: var(--space-12);
     border-radius: var(--radius-2xl);
     box-shadow: var(--shadow-lg);
+    margin: 0 var(--space-4);
 }
 
 .features-tagline {
@@ -894,6 +795,7 @@ a:hover {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: var(--space-8);
+    padding: 0 var(--space-4);
 }
 
 .audience-card {
@@ -967,6 +869,7 @@ a:hover {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: var(--space-8);
     margin-bottom: var(--space-16);
+    padding: 0 var(--space-4);
 }
 
 .pricing-card {
@@ -1093,6 +996,7 @@ a:hover {
     padding: var(--space-12);
     border-radius: var(--radius-2xl);
     box-shadow: var(--shadow-lg);
+    margin: 0 var(--space-4);
 }
 
 .pricing-cta p {
@@ -1112,6 +1016,7 @@ a:hover {
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: var(--space-8);
     margin-bottom: var(--space-16);
+    padding: 0 var(--space-4);
 }
 
 .testimonial-card {
@@ -1178,6 +1083,7 @@ a:hover {
     justify-content: center;
     gap: var(--space-16);
     flex-wrap: wrap;
+    padding: 0 var(--space-4);
 }
 
 .stat-item {
@@ -1206,6 +1112,7 @@ a:hover {
 .faq-container {
     max-width: 800px;
     margin: 0 auto;
+    padding: 0 var(--space-4);
 }
 
 .faq-item {
@@ -1340,6 +1247,7 @@ a:hover {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: var(--space-12);
     margin-bottom: var(--space-16);
+    padding: 0 var(--space-4);
 }
 
 .footer-section h3,
@@ -1430,6 +1338,7 @@ a:hover {
     align-items: center;
     flex-wrap: wrap;
     gap: var(--space-4);
+    padding: 0 var(--space-4);
 }
 
 .copyright {
