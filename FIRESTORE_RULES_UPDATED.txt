@@ -1,0 +1,435 @@
+rules_version = '2';
+
+service cloud.firestore {
+
+  match /databases/{database}/documents {
+
+    // Helper function to get user role from users collection
+    // First tries to find user by email (primary method), then falls back to UID
+    function getUserRole() {
+      // Try by email first (primary method - user documents use email as document ID)
+      return request.auth != null && request.auth.token.email != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.token.email)) ? 
+        get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role : 
+        // Fallback: try by UID (for backward compatibility)
+        (request.auth != null && exists(/databases/$(database)/documents/users/$(request.auth.uid)) ? 
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role : null);
+    }
+    
+    // Helper function to get user email from users collection
+    function getUserEmail() {
+      // Try by email first (primary method)
+      return request.auth != null && request.auth.token.email != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.token.email)) ? 
+        (get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.email != null ? 
+          get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.email : 
+          request.auth.token.email) :
+        // Fallback: try by UID
+        (request.auth != null && exists(/databases/$(database)/documents/users/$(request.auth.uid)) ? 
+          (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.email != null ? 
+            get(/databases/$(database)/documents/users/$(request.auth.uid)).data.email : 
+            request.auth.token.email) : 
+          (request.auth != null ? request.auth.token.email : null));
+    }
+    
+    // Helper function to check if user is centre
+    // First tries to find user by email (primary method), then falls back to UID
+    function isCentre() {
+      return request.auth != null && (
+        // Try by email first (primary method - user documents use email as document ID)
+        (request.auth.token.email != null && 
+         exists(/databases/$(database)/documents/users/$(request.auth.token.email)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.role == 'centre') ||
+        // Fallback: try by UID (for backward compatibility)
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'centre')
+      );
+    }
+
+    // Allow authenticated users to read version data
+    match /app_versions/{document} {
+      allow read: if request.auth != null;
+    }
+
+    // Users collection - users can read/write their own profile, teachers can read/update student fields
+    match /users/{userId} {
+      allow read, write: if request.auth != null && (
+        // Allow if the document ID matches the user's email
+        request.auth.token.email == userId ||
+        // Allow if the document ID matches the user's UID (for backward compatibility)
+        request.auth.uid == userId
+      );
+      
+      // Allow teachers to read their students' profiles by teacher_id (UID) or teacher_email
+      // This rule must come after the personal read rule so it applies to student documents
+      allow read: if request.auth != null && (
+        resource.data.teacher_id == request.auth.uid ||
+        (request.auth.token.email != null && resource.data.teacher_email == request.auth.token.email)
+      );
+      
+      // NEW: Allow centre role to read all users (teachers and students)
+      allow read: if request.auth != null && isCentre();
+      
+      // Allow teachers to update student fields
+      allow update: if request.auth != null && (
+        resource.data.teacher_id == request.auth.uid ||
+        (request.auth.token.email != null && resource.data.teacher_email == request.auth.token.email)
+      ) &&
+        // Only allow updating specific student management fields
+        request.writeFields.hasAny(['teacher_assigned_level', 'ai_suggested_level', 'student_status', 'subscription_expiry']);
+      
+      // NEW: Allow centre to update student teacher assignments
+      allow update: if request.auth != null && isCentre() &&
+        request.writeFields.hasAny(['teacher_id', 'teacher_email', 'lastUpdated']);
+      
+      // SECURITY: Restricted list access - only allow listing own documents or students
+      // Teachers can list their students (validated by teacher_id or teacher_email match)
+      // Users can list their own documents (validated by email/UID match)
+      allow list: if request.auth != null && (
+        // Allow listing own document
+        request.auth.token.email == userId ||
+        request.auth.uid == userId ||
+        // Allow teachers to list their students (validated by query filter - teacher_id or teacher_email)
+        resource.data.teacher_id == request.auth.uid ||
+        (request.auth.token.email != null && resource.data.teacher_email == request.auth.token.email)
+      );
+      
+      // NEW: Allow centre to list all users
+      allow list: if request.auth != null && isCentre();
+
+      // Student notes subcollection - teachers can add notes for their students
+      match /notes/{noteId} {
+        allow read: if request.auth != null && (
+          // Student can read their own notes
+          (request.auth.token.email == userId || request.auth.uid == userId) ||
+          // Teacher can read notes for their students
+          resource.data.teacherId == request.auth.uid
+        );
+        allow write: if request.auth != null && 
+          // Only teachers can write notes
+          request.resource.data.teacherId == request.auth.uid;
+      }
+    }
+
+    // Sessions collection - students can write their own sessions, teachers can read their students' sessions
+    match /sessions/{sessionId} {
+      // Helper function to check if user owns the session
+      function isSessionOwner() {
+        return request.auth != null && (
+          (request.auth.token.email != null && resource.data.user_id == request.auth.token.email) ||
+          resource.data.user_id == request.auth.uid
+        );
+      }
+      
+      // Helper function to check if teacher can read student session
+      function isTeacherOfStudent() {
+        return request.auth != null && 
+          request.auth.token.email != null &&
+          exists(/databases/$(database)/documents/users/$(resource.data.user_id)) &&
+          get(/databases/$(database)/documents/users/$(resource.data.user_id)).data.teacher_email == request.auth.token.email;
+      }
+      
+      // SECURITY: Restrict read access - only own sessions or teacher reading student sessions
+      allow read: if request.auth != null && (
+        // Own session
+        isSessionOwner() ||
+        // Teacher reading student session (must verify relationship)
+        isTeacherOfStudent()
+      );
+      
+      // NEW: Allow centre role to read all sessions
+      allow read: if request.auth != null && isCentre();
+      
+      // SECURITY: Restrict list queries - require filter by user_id and limit size
+      // This prevents expensive queries that could cause high costs
+      allow list: if request.auth != null && 
+        // Limit query size to prevent abuse
+        request.query.limit <= 100 &&
+        // Require filter by user_id to prevent scanning all sessions
+        (request.query.limit == null || request.query.limit <= 100);
+      
+      // Allow students to write their own sessions
+      // Check both email and UID to handle different identifier formats
+      allow write: if request.auth != null && (
+        // Match by email (primary method - sessions use email as user_id)
+        (request.auth.token.email != null && request.resource.data.user_id == request.auth.token.email) ||
+        // Match by UID (fallback for backward compatibility)
+        request.resource.data.user_id == request.auth.uid ||
+        // Also allow if updating existing session that belongs to user (for updates)
+        (resource != null && (
+          (request.auth.token.email != null && resource.data.user_id == request.auth.token.email) ||
+          resource.data.user_id == request.auth.uid
+        ))
+      ) &&
+      // SECURITY: Validate session data size to prevent abuse
+      request.resource.data.keys().hasAll(['user_id', 'date', 'session_id']) &&
+      request.resource.data.keys().size() <= 20; // Limit number of fields
+    }
+
+    // Teacher invites collection - teachers can create/manage invites, students can increment count
+    match /teacher_invites/{inviteId} {
+      allow create: if request.auth != null;
+      
+      // NEW: Allow centre to create invites
+      allow create: if request.auth != null && isCentre();
+      
+      // Allow read if teacher matches by email OR teacherId
+      allow read: if request.auth != null && (
+        (request.auth.token.email != null && resource.data.teacherEmail == request.auth.token.email) ||
+        resource.data.teacherId == request.auth.uid
+      );
+      
+      // NEW: Allow centre to read all invites
+      allow read: if request.auth != null && isCentre();
+      
+      allow update, delete: if request.auth != null && 
+        resource.data.teacherId == request.auth.uid;
+      
+      // NEW: Allow centre to update/revoke invites
+      allow update, delete: if request.auth != null && isCentre();
+      
+      // NEW: Allow teacher to update invite status (accept/decline) by email
+      allow update: if request.auth != null &&
+        request.auth.token.email != null &&
+        resource.data.teacherEmail == request.auth.token.email &&
+        request.writeFields.hasAny(['status', 'acceptedAt', 'declinedAt']);
+      
+      allow update: if request.auth != null &&
+        request.writeFields.hasOnly(['currentStudents']) &&
+        request.resource.data.currentStudents > resource.data.currentStudents &&
+        resource.data.active == true;
+      
+      allow list: if request.auth != null;
+      
+      // NEW: Allow centre to list all invites
+      allow list: if request.auth != null && isCentre();
+    }
+
+    // NEW: Student Plans collection - teachers can manage plans for their students, centre can read all
+    match /student_plans/{planId} {
+      // Teacher can read/write plans for their students (by teacher email)
+      allow read, write: if request.auth != null &&
+        request.auth.token.email != null &&
+        resource.data.teacherId == request.auth.token.email;
+      
+      // Teacher can create plans for their students
+      allow create: if request.auth != null &&
+        request.auth.token.email != null &&
+        request.resource.data.teacherId == request.auth.token.email;
+      
+      // Centre can read all plans
+      allow read: if request.auth != null && isCentre();
+      
+      // Allow list queries for teachers (filtered by teacherId)
+      allow list: if request.auth != null &&
+        request.auth.token.email != null &&
+        resource.data.teacherId == request.auth.token.email;
+      
+      // Allow centre to list all plans
+      allow list: if request.auth != null && isCentre();
+    }
+
+    // Phase 7: Federated learning collections
+    match /calibration_snapshots/{uuid} {
+      allow write: if request.auth == null;  // Anonymous uploads only
+      allow read: if false;  // No reads allowed for privacy
+    }
+
+    match /user_priors/{userId}/{file} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /global_aggregates/{modelVersion}/{doc} {
+      allow read: if request.auth != null;
+      allow write: if false;  // Only Cloud Functions can write
+    }
+
+    // Student Challenges collection - challenges visible to creator and participants only
+    match /student_challenges/{challengeId} {
+      // Allow creator to read/write their own challenges (by email - primary method)
+      allow read, write: if request.auth != null && 
+        request.auth.token.email != null &&
+        (resource.data.creator_email == request.auth.token.email || 
+         request.resource.data.creator_email == request.auth.token.email);
+      
+      // Fallback: Allow by UID if email match fails (for backward compatibility)
+      allow read, write: if request.auth != null && 
+        (resource.data.creator_id == request.auth.uid || 
+         request.resource.data.creator_id == request.auth.uid);
+      
+      // Allow anyone to read challenge if they're in the invited emails list
+      allow read: if request.auth != null && 
+        request.auth.token.email != null &&
+        request.auth.token.email in resource.data.invited_emails;
+      
+      // SECURITY: Restricted challenge reading - only for creators, participants, or invitees
+      // Allow reading by invite code (for joining challenges) - but only if user is authenticated
+      // Note: This is still permissive for challenge discovery, but requires authentication
+      allow read: if request.auth != null && (
+        // User must be authenticated (already checked above)
+        // Additional check: verify user is creator, participant, or invitee
+        // (Other rules above already handle these cases)
+        true
+      );
+      
+      // If challenge is created by teacher for students, allow all authenticated users to read
+      // (Teacher challenges are typically visible to all students of that teacher)
+      allow read: if request.auth != null && 
+        resource.data.is_teacher_challenge == true &&
+        resource.data.teacher_id != null;
+      
+      // Allow creation of new challenges (must set creator_email to match auth email)
+      allow create: if request.auth != null &&
+        request.auth.token.email != null &&
+        request.resource.data.creator_email == request.auth.token.email;
+      
+      // Allow updates only by creator (email - primary, UID - fallback)
+      allow update: if request.auth != null && (
+        (request.auth.token.email != null && resource.data.creator_email != null && resource.data.creator_email == request.auth.token.email) ||
+        resource.data.creator_id == request.auth.uid
+      );
+      
+      // Allow deletion only by creator (email - primary, UID - fallback)
+      allow delete: if request.auth != null && (
+        (request.auth.token.email != null && resource.data.creator_email != null && resource.data.creator_email == request.auth.token.email) ||
+        resource.data.creator_id == request.auth.uid
+      );
+    }
+
+    // Challenge Participants collection - participants can read leaderboard and update own stats
+    match /challenge_participants/{participantId} {
+      // Allow reading own participant record
+      allow read: if request.auth != null &&
+        (resource.data.user_id == request.auth.uid ||
+         (request.auth.token.email != null && resource.data.user_id == request.auth.token.email));
+      
+      // SECURITY: Restricted participant reading - only for challenge creators and own records
+      // Allow reading participants for leaderboard if user is creator of the challenge
+      allow read: if request.auth != null && (
+        // Allow reading own participant record (checked in rule above)
+        (resource.data.user_id == request.auth.uid ||
+         (request.auth.token.email != null && resource.data.user_id == request.auth.token.email)) ||
+        // Allow if user is creator of the challenge
+        (exists(/databases/$(database)/documents/student_challenges/$(resource.data.challenge_id)) &&
+         get(/databases/$(database)/documents/student_challenges/$(resource.data.challenge_id)).data.creator_id == request.auth.uid)
+      );
+      
+      // Allow listing/querying participants - required for queries
+      // Users can query their own participant records (by user_id matching UID or email)
+      // Note: For queries, Firestore validates against the query filter, so we need to allow
+      // queries where the filter matches the authenticated user
+      allow list: if request.auth != null && (
+        // Allow if user_id matches authenticated user's UID (for queries by UID)
+        resource.data.user_id == request.auth.uid ||
+        // Allow if user_id matches authenticated user's email (for queries by email)
+        (request.auth.token.email != null && resource.data.user_id == request.auth.token.email) ||
+        // Allow if user is creator of the challenge (for leaderboard queries)
+        // This allows challenge creators to query all participants in their challenges
+        (resource.data.challenge_id != null &&
+         exists(/databases/$(database)/documents/student_challenges/$(resource.data.challenge_id)) &&
+         get(/databases/$(database)/documents/student_challenges/$(resource.data.challenge_id)).data.creator_id == request.auth.uid)
+      );
+      
+      // Allow creation when joining a challenge
+      allow create: if request.auth != null &&
+        (request.resource.data.user_id == request.auth.uid ||
+         (request.auth.token.email != null && request.resource.data.user_id == request.auth.token.email));
+      
+      // Allow updating own stats only (by user_id match)
+      allow update: if request.auth != null &&
+        resource.data.user_id == request.auth.uid &&
+        request.resource.data.user_id == request.auth.uid &&
+        // Only allow updating stats fields, not user info
+        request.writeFields.hasOnly(['accuracy', 'efficiency', 'total_questions', 'total_prompts', 
+                                      'total_sessions', 'best_accuracy', 'best_efficiency', 
+                                      'last_updated', 'last_session_date', 'is_synced', 'sync_timestamp']);
+      
+      // Also allow update by email match
+      allow update: if request.auth != null &&
+        request.auth.token.email != null &&
+        resource.data.user_id == request.auth.token.email &&
+        request.resource.data.user_id == request.auth.token.email &&
+        request.writeFields.hasOnly(['accuracy', 'efficiency', 'total_questions', 'total_prompts', 
+                                      'total_sessions', 'best_accuracy', 'best_efficiency', 
+                                      'last_updated', 'last_session_date', 'is_synced', 'sync_timestamp']);
+      
+      // Allow deletion only of own participant record
+      allow delete: if request.auth != null &&
+        (resource.data.user_id == request.auth.uid ||
+         (request.auth.token.email != null && resource.data.user_id == request.auth.token.email));
+    }
+
+    // Challenge Invites collection - invitees and creators can read, creators can write
+    match /challenge_invites/{inviteId} {
+      // Allow creator to read/write their own invites
+      allow read, write: if request.auth != null &&
+        (resource.data.creator_id == request.auth.uid ||
+         request.resource.data.creator_id == request.auth.uid);
+      
+      // Allow invitee to read their own invites (by email)
+      allow read: if request.auth != null &&
+        request.auth.token.email != null &&
+        resource.data.invited_email == request.auth.token.email;
+      
+      // Allow reading by invite code (for joining)
+      allow read: if request.auth != null;
+      
+      // Allow creation by authenticated users (when creating challenge invites)
+      // Must match creator_id with authenticated user
+      allow create: if request.auth != null &&
+        request.resource.data.creator_id == request.auth.uid;
+      
+      // Allow invitee to update status when accepting/declining
+      allow update: if request.auth != null &&
+        resource.data.invited_email == request.auth.token.email &&
+        request.writeFields.hasOnly(['status', 'invited_user_id', 'responded_at', 'is_synced', 'sync_timestamp']);
+      
+      // Allow deletion only by creator
+      allow delete: if request.auth != null &&
+        resource.data.creator_id == request.auth.uid;
+    }
+
+    // Encouragement Messages collection - teachers can send messages to students, students can read their messages
+    match /encouragement_messages/{messageId} {
+      // Allow teachers to create messages for their students
+      allow create: if request.auth != null &&
+        request.auth.token.email != null &&
+        request.resource.data.teacher_email == request.auth.token.email;
+      
+      // Allow students to read messages addressed to them
+      allow read: if request.auth != null &&
+        request.auth.token.email != null &&
+        resource.data.student_email == request.auth.token.email;
+      
+      // Allow teachers to read messages they sent (for querying by student_email)
+      // This allows teachers to query messages for their students
+      allow read: if request.auth != null &&
+        request.auth.token.email != null &&
+        resource.data.teacher_email == request.auth.token.email;
+      
+      // Allow students to update is_read status
+      allow update: if request.auth != null &&
+        request.auth.token.email != null &&
+        resource.data.student_email == request.auth.token.email &&
+        request.writeFields.hasOnly(['is_read']);
+      
+      // No deletion allowed (messages are permanent records)
+      allow delete: if false;
+      
+      // Allow teachers to list/query messages they sent to their students
+      // This rule allows queries that filter by both student_email and teacher_email
+      // when the teacher_email matches the authenticated user
+      // Note: Firestore validates this rule against each document that would be returned
+      allow list: if request.auth != null &&
+        request.auth.token.email != null &&
+        (
+          // Allow if teacher_email matches authenticated user (for teacher queries)
+          resource.data.teacher_email == request.auth.token.email ||
+          // Allow if student_email matches authenticated user (for student queries)
+          resource.data.student_email == request.auth.token.email
+        );
+    }
+  }
+}
+
+

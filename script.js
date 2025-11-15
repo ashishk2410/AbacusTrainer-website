@@ -1,132 +1,64 @@
-// Enhanced JavaScript for Abacus Trainer Website
-// SEO, Performance, and User Experience Optimizations
+// Abacus Trainer Website - Interactive JavaScript
+// Kid-Friendly, Fun, and Engaging
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize all components
-    initializeNavigation();
-    initializeScrollEffects();
-    initializeFAQ();
-    initializeAnimations();
-    initializePerformanceOptimizations();
-    initializeSEOFeatures();
-    initializeAnalytics();
+    initNavigation();
+    initFAQ();
+    initAnimations();
+    initSmoothScroll();
+    initScrollEffects();
+    initPricingToggle();
+    initFAQSearch();
 });
 
-// Navigation functionality
-function initializeNavigation() {
-    const navbar = document.getElementById('navbar');
+// Navigation
+function initNavigation() {
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.getElementById('nav-menu');
-    const breadcrumbNav = document.getElementById('breadcrumb-nav');
-    const breadcrumbLink = document.querySelector('.breadcrumb-link');
+    const navLinks = document.querySelectorAll('.nav-link');
     
-    // Mobile menu toggle
-    if (hamburger && navMenu) {
+    if (hamburger) {
         hamburger.addEventListener('click', function() {
-            hamburger.classList.toggle('active');
             navMenu.classList.toggle('active');
-            document.body.classList.toggle('menu-open');
-        });
-        
-        // Close menu when clicking on links
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
-                document.body.classList.remove('menu-open');
-            });
+            hamburger.classList.toggle('active');
         });
     }
+    
+    // Close menu when clicking nav links
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            navMenu.classList.remove('active');
+            hamburger.classList.remove('active');
+        });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+            navMenu.classList.remove('active');
+            hamburger.classList.remove('active');
+        }
+    });
     
     // Navbar scroll effect
-    let lastScrollTop = 0;
+    const navbar = document.getElementById('navbar');
+    let lastScroll = 0;
+    
     window.addEventListener('scroll', function() {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const currentScroll = window.pageYOffset;
         
-        if (scrollTop > 100) {
-            navbar.classList.add('scrolled');
+        if (currentScroll > 100) {
+            navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
         } else {
-            navbar.classList.remove('scrolled');
+            navbar.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
         }
         
-        lastScrollTop = scrollTop;
+        lastScroll = currentScroll;
     }, { passive: true });
-    
-    // Dynamic breadcrumb updates
-    const sections = document.querySelectorAll('section[id]');
-    const breadcrumbText = document.querySelector('.breadcrumb-text');
-    
-    function updateBreadcrumb() {
-        const scrollPos = window.scrollY + 100;
-        
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.offsetHeight;
-            const sectionId = section.getAttribute('id');
-            
-            if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
-                const sectionName = sectionId.charAt(0).toUpperCase() + sectionId.slice(1).replace('-', ' ');
-                if (breadcrumbText) {
-                    breadcrumbText.textContent = sectionName;
-                }
-            }
-        });
-    }
-    
-    window.addEventListener('scroll', debounce(updateBreadcrumb, 100), { passive: true });
-    
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                const offsetTop = target.offsetTop - 80; // Account for fixed navbar
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
 }
 
-// Scroll effects and animations
-function initializeScrollEffects() {
-    // Intersection Observer for fade-in animations
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('animate-in');
-            }
-        });
-    }, observerOptions);
-    
-    // Observe elements for animation
-    const animateElements = document.querySelectorAll('.benefit-card, .feature-card, .audience-card, .pricing-card, .testimonial-card, .step');
-    animateElements.forEach(el => {
-        observer.observe(el);
-    });
-    
-    // Parallax effect for hero section
-    const hero = document.querySelector('.hero');
-    if (hero) {
-        window.addEventListener('scroll', function() {
-            const scrolled = window.pageYOffset;
-            const parallax = scrolled * 0.5;
-            hero.style.transform = `translateY(${parallax}px)`;
-        }, { passive: true });
-    }
-}
-
-// FAQ functionality
-function initializeFAQ() {
+// FAQ Toggle
+function initFAQ() {
     const faqItems = document.querySelectorAll('.faq-item');
     
     faqItems.forEach(item => {
@@ -134,7 +66,7 @@ function initializeFAQ() {
         
         if (question) {
             question.addEventListener('click', function() {
-                // Close other FAQ items
+                // Close other items
                 faqItems.forEach(otherItem => {
                     if (otherItem !== item) {
                         otherItem.classList.remove('active');
@@ -143,69 +75,348 @@ function initializeFAQ() {
                 
                 // Toggle current item
                 item.classList.toggle('active');
-                
-                // Track FAQ interactions for analytics
-                if (item.classList.contains('active')) {
-                    trackEvent('FAQ', 'Question Opened', question.textContent.trim());
-                }
             });
         }
     });
 }
 
-// Animation utilities
-function initializeAnimations() {
-    // Add CSS for animations
-    const style = document.createElement('style');
-    style.textContent = `
-        .animate-in {
-            animation: fadeInUp 0.6s ease-out forwards;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.7;
-            }
-        }
-    `;
-    document.head.appendChild(style);
+// Pricing Toggle (Monthly/Yearly)
+function initPricingToggle() {
+    const toggleButtons = document.querySelectorAll('.toggle-btn');
+    const monthlyPrices = document.querySelectorAll('.monthly-price');
+    const yearlyPrices = document.querySelectorAll('.yearly-price');
+    const pricePeriods = document.querySelectorAll('.price-period');
     
-    // Add pulse animation to CTA buttons
-    const ctaButtons = document.querySelectorAll('.btn-primary');
-    ctaButtons.forEach(button => {
-        button.addEventListener('mouseenter', function() {
-            this.classList.add('pulse');
-        });
-        
-        button.addEventListener('mouseleave', function() {
-            this.classList.remove('pulse');
+    toggleButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const period = this.getAttribute('data-period');
+            
+            // Update active state
+            toggleButtons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Toggle prices
+            if (period === 'yearly') {
+                monthlyPrices.forEach(price => price.classList.add('hide'));
+                yearlyPrices.forEach(price => {
+                    price.classList.remove('hidden');
+                    price.classList.add('show');
+                });
+                pricePeriods.forEach(period => {
+                    period.textContent = '/year';
+                });
+            } else {
+                monthlyPrices.forEach(price => price.classList.remove('hide'));
+                yearlyPrices.forEach(price => {
+                    price.classList.add('hidden');
+                    price.classList.remove('show');
+                });
+                pricePeriods.forEach(period => {
+                    period.textContent = '/month';
+                });
+            }
         });
     });
 }
 
-// Performance optimizations
-function initializePerformanceOptimizations() {
-    // Lazy loading for images
+// Card Focus States for Mobile Scrolling
+function initCardFocusStates() {
+    const scrollableContainers = document.querySelectorAll(
+        '.features-grid, .benefits-grid, .benefits-grid-all, .benefits-grid-center, .audience-grid, .steps-grid, .pricing-cards, .pricing-plans-grid'
+    );
+    
+    scrollableContainers.forEach(container => {
+        let isScrolling = false;
+        let autoScrollInterval = null;
+        
+        container.addEventListener('scroll', function() {
+            if (!isScrolling) {
+                isScrolling = true;
+                
+                // Remove previous focus
+                container.querySelectorAll('.card-focused').forEach(card => {
+                    card.classList.remove('card-focused');
+                });
+                
+                // Find the card in view
+                const cards = container.querySelectorAll(
+                    '.feature-card, .benefit-card, .audience-card, .step-card, .pricing-card, .plan-card'
+                );
+                
+                cards.forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    const containerRect = container.getBoundingClientRect();
+                    
+                    // Check if card is in center viewport
+                    const cardCenter = rect.left + rect.width / 2;
+                    const containerCenter = containerRect.left + containerRect.width / 2;
+                    
+                    if (Math.abs(cardCenter - containerCenter) < rect.width / 2) {
+                        card.classList.add('card-focused');
+                    }
+                });
+                
+                setTimeout(() => {
+                    isScrolling = false;
+                }, 150);
+            }
+        });
+        
+        // Initialize on load
+        container.dispatchEvent(new Event('scroll'));
+        
+        // Circular scrolling for features grid (all screen sizes)
+        if (container.classList.contains('features-grid')) {
+            initCircularScrolling(container);
+        }
+        
+        // Circular scrolling for pricing cards on mobile/tablet
+        if (container.classList.contains('pricing-cards') && window.innerWidth <= 1024) {
+            initCircularScrolling(container);
+        }
+        
+        // Circular scrolling for pricing plans grid on mobile/tablet
+        if (container.classList.contains('pricing-plans-grid') && window.innerWidth <= 1024) {
+            initCircularScrolling(container);
+        }
+    });
+}
+
+// Circular/Infinite Scrolling for Features and Pricing
+function initCircularScrolling(container) {
+    // Select cards based on container type
+    let cardSelector = '.feature-card';
+    if (container.classList.contains('pricing-plans-grid')) {
+        cardSelector = '.plan-card';
+    } else if (container.classList.contains('pricing-cards')) {
+        cardSelector = '.pricing-card';
+    }
+    
+    const cards = container.querySelectorAll(cardSelector + ':not(.card-clone)');
+    if (cards.length === 0) return;
+    
+    // Clone cards for seamless looping
+    cards.forEach(card => {
+        const clone = card.cloneNode(true);
+        clone.classList.add('card-clone');
+        container.appendChild(clone);
+    });
+    
+    let isUserScrolling = false;
+    let scrollTimeout = null;
+    let scrollSpeed = (container.classList.contains('pricing-plans-grid') || container.classList.contains('pricing-cards')) ? 0.8 : 1; // Slightly slower for pricing
+    
+    // Auto-scroll animation
+    function autoScroll() {
+        if (isUserScrolling) return;
+        
+        container.scrollLeft += scrollSpeed;
+        
+        // Check if we've scrolled past original content
+        const originalWidth = container.scrollWidth / 2;
+        if (container.scrollLeft >= originalWidth) {
+            container.scrollLeft = container.scrollLeft - originalWidth;
+        }
+    }
+    
+    // User interaction handlers
+    container.addEventListener('touchstart', () => {
+        isUserScrolling = true;
+        if (scrollTimeout) clearInterval(scrollTimeout);
+    });
+    
+    container.addEventListener('touchend', () => {
+        setTimeout(() => {
+            isUserScrolling = false;
+            if (!scrollTimeout) {
+                scrollTimeout = setInterval(autoScroll, 20);
+            }
+        }, 2000);
+    });
+    
+    container.addEventListener('mousedown', () => {
+        isUserScrolling = true;
+        if (scrollTimeout) clearInterval(scrollTimeout);
+    });
+    
+    container.addEventListener('mouseup', () => {
+        setTimeout(() => {
+            isUserScrolling = false;
+            if (!scrollTimeout) {
+                scrollTimeout = setInterval(autoScroll, 20);
+            }
+        }, 2000);
+    });
+    
+    // Pause on hover
+    container.addEventListener('mouseenter', () => {
+        if (scrollTimeout) {
+            clearInterval(scrollTimeout);
+            scrollTimeout = null;
+        }
+    });
+    
+    container.addEventListener('mouseleave', () => {
+        if (!isUserScrolling && !scrollTimeout) {
+            scrollTimeout = setInterval(autoScroll, 20);
+        }
+    });
+    
+    // Handle window resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            // Reset scroll position on resize
+            if (container.scrollLeft >= container.scrollWidth / 2) {
+                container.scrollLeft = container.scrollLeft - container.scrollWidth / 2;
+            }
+        }, 250);
+    });
+    
+    // Start auto-scroll after initial delay
+    setTimeout(() => {
+        if (!isUserScrolling && !scrollTimeout) {
+            scrollTimeout = setInterval(autoScroll, 20);
+        }
+    }, 1500);
+}
+
+// FAQ Search
+function initFAQSearch() {
+    const searchInput = document.getElementById('faq-search');
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question h3').textContent.toLowerCase();
+                const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+                const matches = question.includes(searchTerm) || answer.includes(searchTerm);
+                
+                if (matches || searchTerm === '') {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Hide/show parent sections if all items are hidden
+            document.querySelectorAll('.faq-section').forEach(section => {
+                const visibleItems = Array.from(section.querySelectorAll('.faq-item')).filter(
+                    item => item.style.display !== 'none'
+                );
+                section.style.display = visibleItems.length > 0 || searchTerm === '' ? 'block' : 'none';
+            });
+        });
+    }
+}
+
+// Smooth Scroll
+function initSmoothScroll() {
+    const links = document.querySelectorAll('a[href^="#"]');
+    
+    links.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            
+            if (href !== '#' && href !== '') {
+                const target = document.querySelector(href);
+                
+                if (target) {
+                    e.preventDefault();
+                    const offsetTop = target.offsetTop - 140; // Account for fixed navbar
+                    
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+    });
+}
+
+// Scroll Animations
+function initScrollEffects() {
+    const animatedElements = document.querySelectorAll('.benefit-card, .feature-card, .step-card, .audience-card');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 100);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+    
+    animatedElements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+    });
+}
+
+// General Animations
+function initAnimations() {
+    // Add pulse animation to buttons on hover
+    const buttons = document.querySelectorAll('.btn-primary');
+    
+    buttons.forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            this.style.animation = 'pulse 1s ease-in-out infinite';
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.animation = 'none';
+        });
+    });
+    
+    // Add CSS for pulse animation
+    if (!document.getElementById('dynamic-styles')) {
+        const style = document.createElement('style');
+        style.id = 'dynamic-styles';
+        style.textContent = `
+            @keyframes pulse {
+                0%, 100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.05);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Parallax effect for hero section
+    const hero = document.querySelector('.hero');
+    if (hero) {
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * 0.3;
+            
+            if (scrolled < hero.offsetHeight) {
+                hero.style.transform = `translateY(${rate}px)`;
+            }
+        }, { passive: true });
+    }
+}
+
+// Performance optimization - Lazy load images
+function initLazyLoading() {
     const images = document.querySelectorAll('img[data-src]');
-    const imageObserver = new IntersectionObserver((entries, observer) => {
+    
+    const imageObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const img = entry.target;
@@ -217,270 +428,45 @@ function initializePerformanceOptimizations() {
     });
     
     images.forEach(img => imageObserver.observe(img));
-    
-    // Preload critical resources
-    const criticalResources = [
-        'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap',
-        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
-    ];
-    
-    criticalResources.forEach(resource => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'style';
-        link.href = resource;
-        document.head.appendChild(link);
-    });
-    
-    // Optimize scroll events
-    let ticking = false;
-    function updateScrollEffects() {
-        // Your scroll-based updates here
-        ticking = false;
-    }
-    
-    function requestTick() {
-        if (!ticking) {
-            requestAnimationFrame(updateScrollEffects);
-            ticking = true;
+}
+
+// Initialize lazy loading if needed
+if (document.querySelectorAll('img[data-src]').length > 0) {
+    initLazyLoading();
+}
+
+// Handle window resize
+let resizeTimer;
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+        // Close mobile menu on resize if needed
+        const navMenu = document.getElementById('nav-menu');
+        if (window.innerWidth > 768 && navMenu) {
+            navMenu.classList.remove('active');
         }
-    }
-    
-    window.addEventListener('scroll', requestTick, { passive: true });
-}
+    }, 250);
+}, { passive: true });
 
-// SEO and analytics features
-function initializeSEOFeatures() {
-    // Track page views
-    trackPageView();
+// Add active state to navigation links based on scroll position
+window.addEventListener('scroll', function() {
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
     
-    // Track user interactions
-    trackUserInteractions();
-    
-    // Add structured data for better SEO
-    addStructuredData();
-    
-    // Optimize for Core Web Vitals
-    optimizeCoreWebVitals();
-}
-
-function initializeAnalytics() {
-    // Google Analytics 4 implementation
-    if (typeof gtag !== 'undefined') {
-        // Track custom events
-        window.trackEvent = function(category, action, label, value) {
-            gtag('event', action, {
-                event_category: category,
-                event_label: label,
-                value: value
-            });
-        };
+    let current = '';
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop - 200;
+        const sectionHeight = section.clientHeight;
         
-        // Track page views
-        window.trackPageView = function(pagePath = window.location.pathname) {
-            gtag('config', 'GA_MEASUREMENT_ID', {
-                page_path: pagePath
-            });
-        };
-    } else {
-        // Fallback tracking for when GA is not loaded
-        window.trackEvent = function(category, action, label, value) {
-            console.log('Event tracked:', { category, action, label, value });
-        };
-        
-        window.trackPageView = function(pagePath = window.location.pathname) {
-            console.log('Page view tracked:', pagePath);
-        };
-    }
-}
-
-// Utility functions
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-function throttle(func, limit) {
-    let inThrottle;
-    return function() {
-        const args = arguments;
-        const context = this;
-        if (!inThrottle) {
-            func.apply(context, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
-    };
-}
-
-// Track user interactions
-function trackUserInteractions() {
-    // Track button clicks
-    document.querySelectorAll('.btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const buttonText = this.textContent.trim();
-            const buttonType = this.classList.contains('btn-primary') ? 'Primary' : 'Secondary';
-            trackEvent('Button', 'Click', `${buttonType} - ${buttonText}`);
-        });
-    });
-    
-    // Track navigation clicks
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', function() {
-            trackEvent('Navigation', 'Click', this.textContent.trim());
-        });
-    });
-    
-    // Track pricing card interactions
-    document.querySelectorAll('.pricing-card').forEach(card => {
-        card.addEventListener('click', function() {
-            const planName = this.querySelector('h3').textContent.trim();
-            trackEvent('Pricing', 'Card Click', planName);
-        });
-    });
-    
-    // Track external link clicks
-    document.querySelectorAll('a[target="_blank"]').forEach(link => {
-        link.addEventListener('click', function() {
-            trackEvent('External Link', 'Click', this.href);
-        });
-    });
-}
-
-// Add structured data for better SEO
-function addStructuredData() {
-    // Add FAQ structured data
-    const faqData = {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": []
-    };
-    
-    document.querySelectorAll('.faq-item').forEach((item, index) => {
-        const question = item.querySelector('.faq-question h3').textContent.trim();
-        const answer = item.querySelector('.faq-answer p').textContent.trim();
-        
-        faqData.mainEntity.push({
-            "@type": "Question",
-            "name": question,
-            "acceptedAnswer": {
-                "@type": "Answer",
-                "text": answer
-            }
-        });
-    });
-    
-    const faqScript = document.createElement('script');
-    faqScript.type = 'application/ld+json';
-    faqScript.textContent = JSON.stringify(faqData);
-    document.head.appendChild(faqScript);
-    
-    // Add organization structured data
-    const organizationData = {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Abacus Trainer",
-        "url": "https://abacustrainer.netlify.app",
-        "logo": "https://abacustrainer.netlify.app/images/logo.svg",
-        "description": "Master abacus faster with AI-powered practice sessions, progress tracking, and gamification.",
-        "contactPoint": {
-            "@type": "ContactPoint",
-            "email": "MyAbacusTrainer@GMail.com",
-            "contactType": "customer service"
-        },
-        "sameAs": [
-            "https://play.google.com/store/apps/details?id=com.abacus.trainer"
-        ]
-    };
-    
-    const orgScript = document.createElement('script');
-    orgScript.type = 'application/ld+json';
-    orgScript.textContent = JSON.stringify(organizationData);
-    document.head.appendChild(orgScript);
-}
-
-// Optimize for Core Web Vitals
-function optimizeCoreWebVitals() {
-    // Optimize Largest Contentful Paint (LCP)
-    const heroImage = document.querySelector('.phone-mockup');
-    if (heroImage) {
-        heroImage.loading = 'eager';
-        heroImage.fetchPriority = 'high';
-    }
-    
-    // Optimize Cumulative Layout Shift (CLS)
-    const images = document.querySelectorAll('img');
-    images.forEach(img => {
-        if (!img.hasAttribute('width') || !img.hasAttribute('height')) {
-            img.style.aspectRatio = '1 / 1';
+        if (window.pageYOffset >= sectionTop && window.pageYOffset < sectionTop + sectionHeight) {
+            current = section.getAttribute('id');
         }
     });
     
-    // Optimize First Input Delay (FID)
-    document.addEventListener('click', function() {
-        // Preload critical resources on first interaction
-        const criticalImages = document.querySelectorAll('img[data-src]');
-        criticalImages.forEach(img => {
-            if (img.dataset.src) {
-                img.src = img.dataset.src;
-            }
-        });
-    }, { once: true });
-}
-
-// Error handling and monitoring
-window.addEventListener('error', function(e) {
-    console.error('JavaScript error:', e.error);
-    if (typeof trackEvent === 'function') {
-        trackEvent('Error', 'JavaScript Error', e.message);
-    }
-});
-
-// Service Worker registration for PWA features
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(registration) {
-                console.log('ServiceWorker registration successful');
-            })
-            .catch(function(err) {
-                console.log('ServiceWorker registration failed');
-            });
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+            link.classList.add('active');
+        }
     });
-}
-
-// Performance monitoring
-function measurePerformance() {
-    if ('performance' in window) {
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                const perfData = performance.getEntriesByType('navigation')[0];
-                const loadTime = perfData.loadEventEnd - perfData.loadEventStart;
-                
-                if (typeof trackEvent === 'function') {
-                    trackEvent('Performance', 'Page Load Time', loadTime.toString());
-                }
-            }, 0);
-        });
-    }
-}
-
-// Initialize performance monitoring
-measurePerformance();
-
-// Export functions for testing
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        debounce,
-        throttle,
-        trackEvent,
-        trackPageView
-    };
-}
+}, { passive: true });

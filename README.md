@@ -1,219 +1,146 @@
 # Abacus Trainer Website
 
-A modern, SEO-optimized website for the Abacus Trainer mobile app - the most advanced abacus learning platform powered by AI and gamification.
+Next.js website for Abacus Trainer with Centre & Teacher Management features.
 
-## 🚀 Features
+## Features
 
-### Modern Design
-- **Responsive Design**: Mobile-first approach with perfect display on all devices
-- **Modern UI/UX**: Clean, professional design with smooth animations
-- **Performance Optimized**: Fast loading times and smooth interactions
-- **Accessibility**: WCAG compliant with keyboard navigation support
+- **Public Website**: Marketing site with features, pricing, and FAQ
+- **Centre Dashboard**: Manage teachers, send invites, view students
+- **Teacher Dashboard**: View assigned students, accept/decline invites
+- **Student Details**: Analytics, performance trends, and improvement plans
 
-### SEO Optimization
-- **Meta Tags**: Comprehensive meta tags for social sharing and search engines
-- **Structured Data**: JSON-LD structured data for rich snippets
-- **Sitemap**: XML sitemap for better crawling
-- **Core Web Vitals**: Optimized for Google's Core Web Vitals
-- **Analytics Ready**: Google Analytics 4 integration
+## Tech Stack
 
-### Content Sections
-- **Hero Section**: Compelling headline with app mockup and CTA buttons
-- **Key Benefits**: AI-powered learning, progress tracking, gamification
-- **How It Works**: Simple 3-step process explanation
-- **Features Overview**: Comprehensive feature showcase
-- **Target Audience**: Students, teachers, and parents
-- **Pricing Plans**: Clear pricing with feature comparison
-- **Testimonials**: Social proof from real users
-- **FAQ Section**: Common questions and answers
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS + Existing CSS
+- **Database**: Firebase Firestore (existing project)
+- **Authentication**: Firebase Auth
 
-## 📁 Project Structure
+## Setup
+
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
+
+2. **Environment Variables**
+   Create `.env.local` file (already created with values):
+   ```env
+   NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyA-68vf1Ot5lZ33_7sxGAOlHQAbtv9mBNM
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=myabacustrainer-51e6a
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=myabacustrainer-51e6a.firebaseapp.com
+   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=myabacustrainer-51e6a.firebasestorage.app
+   ```
+
+3. **Run Development Server**
+   ```bash
+   npm run dev
+   ```
+
+4. **Build for Production**
+   ```bash
+   npm run build
+   npm start
+   ```
+
+## Project Structure
 
 ```
-AbacusTrainer-website/
-├── index.html              # Main landing page
-├── style.css               # Modern CSS with animations
-├── script.js               # Enhanced JavaScript functionality
-├── faq.html                # FAQ page
-├── privacy-policy.html     # Privacy policy
-├── terms.html              # Terms of use
-├── sitemap.xml             # SEO sitemap
-├── robots.txt              # Search engine directives
-├── images/                 # Image assets
-│   ├── logo.svg           # App logo
-│   ├── phone-mockup.png   # Hero section mockup
-│   └── google-play-logo.svg
-└── README.md              # This file
+├── app/                    # Next.js App Router pages
+│   ├── layout.tsx         # Root layout
+│   ├── page.tsx           # Home page
+│   ├── login/             # Login page
+│   ├── centre/dashboard/  # Centre dashboard
+│   ├── teacher/dashboard/ # Teacher dashboard
+│   └── student/[id]/      # Student details
+├── components/            # React components
+│   ├── Navbar.tsx
+│   ├── Footer.tsx
+│   ├── LoginPage.tsx
+│   ├── CentreDashboard.tsx
+│   ├── TeacherDashboard.tsx
+│   └── StudentDetails.tsx
+├── lib/                   # Utilities
+│   ├── firebase.ts        # Firebase config
+│   ├── firestore.ts      # Firestore helpers
+│   └── types.ts          # TypeScript types
+├── contexts/              # React contexts
+│   └── AuthContext.tsx   # Authentication context
+└── public/               # Static assets
+    └── images/          # Images
 ```
 
-## 🎨 Design System
+## Firebase Integration
 
-### Color Palette
-- **Primary**: #6366f1 (Indigo)
-- **Secondary**: #f59e0b (Amber)
-- **Accent**: #10b981 (Emerald)
-- **Neutral**: Gray scale from #f9fafb to #111827
+This website connects to the **existing Firebase project** used by the Android app:
+- **Project ID**: `myabacustrainer-51e6a`
+- **Collections Used**:
+  - `users` - User data (email as document ID)
+  - `sessions` - Student practice sessions
+  - `teacher_invites` - Teacher invitation system
+  - `student_plans` - Student improvement plans
 
-### Typography
-- **Primary Font**: Inter (clean, modern)
-- **Secondary Font**: Poppins (friendly, approachable)
+**Important**: This website only **reads/writes data** to the existing Firebase project. It does NOT modify the Android app's Firebase configuration.
 
-### Components
-- **Buttons**: Gradient primary, outlined secondary
-- **Cards**: Elevated with hover effects
-- **Navigation**: Fixed header with backdrop blur
-- **Animations**: Smooth transitions and micro-interactions
+## Data Structure
 
-## 🚀 Deployment
+All data structures match the Android app's Firestore schema:
+- Users use **email addresses** as document IDs (not Firebase UIDs)
+- Student-teacher relationships use `teacher_email` field
+- All joins and queries use email addresses
 
-### Netlify (Recommended)
-1. Connect your GitHub repository to Netlify
-2. Set build command: `# No build step required`
-3. Set publish directory: `/`
-4. Deploy!
+## Deployment
+
+### Netlify
+
+1. **Build Command**: `npm run build`
+2. **Publish Directory**: `.next`
+3. **Environment Variables**: Add all `NEXT_PUBLIC_*` variables in Netlify dashboard
 
 ### Vercel
-1. Import project from GitHub
-2. Set framework preset to "Other"
-3. Deploy!
 
-### GitHub Pages
-1. Enable GitHub Pages in repository settings
-2. Select source branch (main)
-3. Your site will be available at `https://username.github.io/AbacusTrainer-website`
+1. Connect your GitHub repository
+2. Vercel will auto-detect Next.js
+3. Add environment variables in project settings
 
-## 🔧 Customization
+## Authentication
 
-### SEO Configuration
-1. Update `GA_MEASUREMENT_ID` in `index.html` with your Google Analytics ID
-2. Modify meta tags in the `<head>` section
-3. Update structured data with your specific information
-4. Customize sitemap.xml with your domain
+- **Login**: Email/password via Firebase Auth
+- **Roles**: `centre` and `teacher` roles can access dashboards
+- **Protected Routes**: Automatically redirect to login if not authenticated
 
-### Content Updates
-1. **Hero Section**: Update headlines and CTAs in `index.html`
-2. **Features**: Modify feature cards in the features section
-3. **Pricing**: Update pricing plans and features
-4. **Testimonials**: Add real user testimonials
-5. **FAQ**: Update questions and answers
+## Key Features
 
-### Styling
-1. **Colors**: Update CSS custom properties in `:root`
-2. **Fonts**: Change font imports and font-family declarations
-3. **Layout**: Modify grid and flexbox layouts
-4. **Animations**: Customize keyframe animations
+### Centre Dashboard
+- Send teacher invites (48-hour expiry)
+- View all teachers
+- View students by teacher
+- Manage student assignments
 
-## 📊 SEO Features
+### Teacher Dashboard
+- View pending invites (accept/decline)
+- View assigned students
+- Navigate to student details
 
-### On-Page SEO
-- ✅ Semantic HTML5 structure
-- ✅ Meta descriptions and keywords
-- ✅ Open Graph and Twitter Card tags
-- ✅ Canonical URLs
-- ✅ Alt text for images
-- ✅ Heading hierarchy (H1-H6)
-- ✅ Internal linking structure
+### Student Details
+- Performance metrics (accuracy, efficiency, streak)
+- Performance trends chart (last 30 days)
+- Improvement plan with tasks
+- Task management (create, update, track progress)
 
-### Technical SEO
-- ✅ XML sitemap
-- ✅ Robots.txt
-- ✅ Mobile-friendly design
-- ✅ Fast loading times
-- ✅ Core Web Vitals optimization
-- ✅ Structured data (JSON-LD)
+## Notes
 
-### Content SEO
-- ✅ Keyword-optimized content
-- ✅ Long-tail keywords
-- ✅ Local SEO considerations
-- ✅ User intent optimization
-- ✅ Content freshness signals
+- The existing `style.css` is imported in `globals.css` to preserve the original design
+- Static HTML pages (faq.html, privacy-policy.html, terms.html) are preserved in the `public` folder
+- The website is fully responsive and works on mobile, tablet, and desktop
 
-## 📱 Mobile Optimization
+## Development
 
-- **Responsive Design**: Works perfectly on all screen sizes
-- **Touch-Friendly**: Large buttons and touch targets
-- **Fast Loading**: Optimized images and code
-- **Mobile Navigation**: Hamburger menu for small screens
-- **Performance**: Optimized for mobile networks
+- **TypeScript**: Strict mode enabled
+- **Linting**: ESLint with Next.js config
+- **Formatting**: Prettier (recommended)
 
-## 🔍 Analytics & Tracking
+## Support
 
-### Google Analytics 4
-- Page view tracking
-- Event tracking (clicks, scrolls, interactions)
-- Conversion tracking
-- User journey analysis
-
-### Custom Events Tracked
-- Button clicks
-- Navigation interactions
-- FAQ expansions
-- Pricing card clicks
-- External link clicks
-- Form submissions
-
-## 🛠️ Development
-
-### Local Development
-1. Clone the repository
-2. Open `index.html` in a web browser
-3. Use a local server for testing (recommended)
-
-### Browser Support
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-
-### Performance
-- Lighthouse Score: 95+
-- First Contentful Paint: < 1.5s
-- Largest Contentful Paint: < 2.5s
-- Cumulative Layout Shift: < 0.1
-
-## 📈 Marketing Features
-
-### Conversion Optimization
-- Clear value propositions
-- Multiple CTA buttons
-- Social proof (testimonials, ratings)
-- Trust signals (security, guarantees)
-- Urgency and scarcity elements
-
-### Lead Generation
-- Free trial offers
-- Newsletter signup (if implemented)
-- Contact forms
-- Download tracking
-
-## 🔒 Security
-
-- HTTPS enforcement
-- Content Security Policy headers
-- No sensitive data exposure
-- Secure external links
-- Privacy-compliant tracking
-
-## 📞 Support
-
-For questions or support:
-- **Email**: MyAbacusTrainer@GMail.com
-- **Website**: https://abacustrainer.netlify.app
-- **App Store**: [Google Play Store](https://play.google.com/store/apps/details?id=com.abacus.trainer)
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
----
-
-**Built with ❤️ for better abacus learning**
+For issues or questions, contact: myabacustrainer@gmail.com
