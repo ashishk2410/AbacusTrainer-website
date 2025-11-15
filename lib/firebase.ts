@@ -14,6 +14,12 @@ function getEnvVars() {
   };
 }
 
+// Check if environment variables are available
+function hasEnvVars(): boolean {
+  const { apiKey, authDomain, projectId, storageBucket } = getEnvVars();
+  return !!(apiKey && authDomain && projectId && storageBucket);
+}
+
 // Validate environment variables - only throw when actually trying to use Firebase
 function validateEnvVars() {
   const { apiKey, authDomain, projectId, storageBucket } = getEnvVars();
@@ -60,9 +66,27 @@ function getApp(): FirebaseApp {
   return app;
 }
 
-// Lazy getters - only initialize when accessed
+// Lazy getters - only initialize when accessed and env vars are available
 export const auth: Auth = new Proxy({} as Auth, {
   get(target, prop) {
+    // If env vars are missing, return a mock that won't crash
+    if (!hasEnvVars()) {
+      // Return a mock auth object that handles common operations gracefully
+      if (prop === 'currentUser') return null;
+      if (prop === 'onAuthStateChanged') {
+        return (callback: any) => {
+          // Return a no-op unsubscribe function
+          callback(null);
+          return () => {};
+        };
+      }
+      if (prop === 'signInWithEmailAndPassword' || prop === 'signOut') {
+        return () => Promise.reject(new Error('Firebase environment variables are not configured. Please set them in Netlify environment variables.'));
+      }
+      // For other properties, return undefined or a no-op function
+      return undefined;
+    }
+    
     if (!authInstance) {
       authInstance = getAuth(getApp());
     }
@@ -76,6 +100,23 @@ export const auth: Auth = new Proxy({} as Auth, {
 
 export const db: Firestore = new Proxy({} as Firestore, {
   get(target, prop) {
+    // If env vars are missing, return a mock that won't crash
+    if (!hasEnvVars()) {
+      // Return a mock db object
+      if (prop === 'collection') {
+        return () => ({
+          doc: () => ({
+            get: () => Promise.reject(new Error('Firebase environment variables are not configured.')),
+            set: () => Promise.reject(new Error('Firebase environment variables are not configured.')),
+          }),
+          where: () => ({
+            get: () => Promise.reject(new Error('Firebase environment variables are not configured.')),
+          }),
+        });
+      }
+      return undefined;
+    }
+    
     if (!dbInstance) {
       dbInstance = getFirestore(getApp());
     }
