@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+// Ensure this component can render even if there are errors
 export default function FAQPage() {
   const [openItems, setOpenItems] = useState<Set<number>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');

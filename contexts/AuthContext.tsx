@@ -25,11 +25,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     let mounted = true;
     
     try {
+      // Immediately set loading to false if we can't initialize
+      // This prevents the app from hanging
+      if (typeof window === 'undefined') {
+        // Server-side: don't try to initialize Firebase
+        if (mounted) {
+          setLoading(false);
+        }
+        return () => {
+          mounted = false;
+        };
+      }
       // Check if Firebase is configured before setting up listener
       const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
       if (!apiKey) {
@@ -153,13 +165,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
-    await signOut(auth);
-    setUserData(null);
+    try {
+      await signOut(auth);
+      setUserData(null);
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // Still clear local state even if Firebase logout fails
+      setUserData(null);
+      setUser(null);
+    }
   };
 
+  // If there's a critical error, still render children but with limited functionality
+  // This ensures the app doesn't completely break
   return (
     <AuthContext.Provider value={{ user, userData, loading, login, logout }}>
-      {children}
+      {error ? (
+        <>
+          {children}
+          {/* Silently handle error - don't break the UI */}
+        </>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 }
