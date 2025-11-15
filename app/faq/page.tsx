@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 // Ensure this component can render even if there are errors
 export default function FAQPage() {
-  const [openItems, setOpenItems] = useState<Set<number>>(new Set());
+  const [openItems, setOpenItems] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [mounted, setMounted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,13 +26,11 @@ export default function FAQPage() {
   }, []);
 
   const toggleItem = (index: number) => {
-    const newOpenItems = new Set(openItems);
-    if (newOpenItems.has(index)) {
-      newOpenItems.delete(index);
-    } else {
-      newOpenItems.add(index);
-    }
-    setOpenItems(newOpenItems);
+    setOpenItems(prev => 
+      prev.includes(index) 
+        ? prev.filter(i => i !== index)
+        : [...prev, index]
+    );
   };
 
   const faqSections = [
@@ -313,7 +311,7 @@ export default function FAQPage() {
                 <div className="faq-items">
                   {section.items.map((item, itemIndex) => {
                     const globalIndex = sectionIndex * 1000 + itemIndex;
-                    const isOpen = openItems.has(globalIndex);
+                    const isOpen = openItems.includes(globalIndex);
                     return (
                       <div key={itemIndex} className="faq-item" style={{
                         background: 'white',
