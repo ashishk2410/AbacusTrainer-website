@@ -1,11 +1,17 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function FAQPage() {
   const [openItems, setOpenItems] = useState<Set<number>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration errors
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const toggleItem = (index: number) => {
     const newOpenItems = new Set(openItems);
@@ -208,6 +214,17 @@ export default function FAQPage() {
       return filteredItems.some(fi => fi.globalIndex === globalIndex);
     })
   })).filter(section => section.items.length > 0);
+
+  // Prevent hydration errors
+  if (!mounted) {
+    return (
+      <div style={{ minHeight: '100vh', padding: '180px 20px 40px', background: '#F9FAFB' }}>
+        <div className="container" style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
+          <p style={{ color: '#6B7280' }}>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: '100vh', padding: '180px 20px 40px', background: '#F9FAFB' }}>

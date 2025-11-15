@@ -51,6 +51,14 @@ export function getFriendlyErrorMessage(error: any): string {
     return 'The requested information could not be found.';
   }
 
+  // Check for missing environment variables or configuration errors
+  if (errorCode === 'auth/configuration-error' || 
+      errorMessage.includes('Firebase environment variables are not configured') || 
+      errorMessage.includes('environment variables') ||
+      errorMessage.includes('not properly initialized')) {
+    return 'Firebase is not configured. Please contact support to set up the environment variables.';
+  }
+
   // Generic fallback - remove technical details
   if (errorMessage.includes('Firebase') || errorMessage.includes('auth/') || errorMessage.includes('firestore/')) {
     return 'Unable to complete this action. Please try again or contact support if the problem persists.';

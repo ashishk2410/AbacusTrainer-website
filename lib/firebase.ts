@@ -67,18 +67,29 @@ function getApp(): FirebaseApp {
 }
 
 // Create a more complete mock auth object for when env vars are missing
+// This needs to be compatible with Firebase's internal validation
 function createMockAuth(): any {
   const mockApp = {
     name: '[DEFAULT]',
     options: {},
     automaticDataCollectionEnabled: false,
+    _delegate: {
+      name: '[DEFAULT]',
+    },
   };
   
-  return {
+  const mockAuth = {
     app: mockApp,
     currentUser: null,
     settings: {
       appVerificationDisabledForTesting: false,
+    },
+    _delegate: {
+      app: mockApp,
+      currentUser: null,
+      settings: {
+        appVerificationDisabledForTesting: false,
+      },
     },
     onAuthStateChanged: (callback: any) => {
       callback(null);
@@ -91,6 +102,11 @@ function createMockAuth(): any {
       return Promise.reject(new Error('Firebase environment variables are not configured. Please set them in Netlify environment variables.'));
     },
   };
+  
+  // Make it look more like a real Auth instance
+  Object.setPrototypeOf(mockAuth, Object.prototype);
+  
+  return mockAuth;
 }
 
 // Lazy getters - only initialize when accessed and env vars are available

@@ -63,15 +63,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // Check if Firebase is properly configured before attempting login
       const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
-      if (!apiKey) {
-        throw new Error('Firebase environment variables are not configured. Please set them in Netlify environment variables.');
+      const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
+      const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+      
+      if (!apiKey || !authDomain || !projectId) {
+        const error: any = new Error('Firebase environment variables are not configured. Please set them in Netlify environment variables.');
+        error.code = 'auth/configuration-error';
+        throw error;
       }
       
+      // Verify auth object is properly initialized by checking for required properties
+      if (!auth || typeof auth !== 'object' || !('app' in auth)) {
+        const error: any = new Error('Firebase authentication is not properly initialized.');
+        error.code = 'auth/configuration-error';
+        throw error;
+      }
+      
+      // Only call Firebase function if we have valid env vars
       await signInWithEmailAndPassword(auth, email, password);
       // User data will be set by onAuthStateChanged
       // Wait a bit for the user data to be fetched
       await new Promise(resolve => setTimeout(resolve, 500));
-    } catch (error) {
+    } catch (error: any) {
       // Re-throw to be handled by the component
       throw error;
     }
