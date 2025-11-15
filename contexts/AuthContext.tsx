@@ -8,7 +8,8 @@ import {
   onAuthStateChanged
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { getUserByEmail, User } from '@/lib/firestore';
+import { getUserByEmail } from '@/lib/firestore';
+import { User } from '@/lib/types';
 
 interface AuthContextType {
   user: FirebaseUser | null;
