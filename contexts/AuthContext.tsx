@@ -27,30 +27,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setUser(firebaseUser);
-      if (firebaseUser && firebaseUser.email) {
-        try {
-          const data = await getUserByEmail(firebaseUser.email);
-          setUserData(data);
-          if (!data) {
-            console.warn(`User document not found in Firestore for email: ${firebaseUser.email}`);
+    try {
+      const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+        setUser(firebaseUser);
+        if (firebaseUser && firebaseUser.email) {
+          try {
+            const data = await getUserByEmail(firebaseUser.email);
+            setUserData(data);
+            if (!data) {
+              console.warn(`User document not found in Firestore for email: ${firebaseUser.email}`);
+            }
+          } catch (error) {
+            console.error('Error fetching user data:', error);
+            setUserData(null);
           }
-        } catch (error) {
-          console.error('Error fetching user data:', error);
+        } else {
           setUserData(null);
         }
-      } else {
-        setUserData(null);
-      }
-      setLoading(false);
-    });
+        setLoading(false);
+      });
 
-    return () => unsubscribe();
+      return () => {
+        if (unsubscribe && typeof unsubscribe === 'function') {
+          unsubscribe();
+        }
+      };
+    } catch (error) {
+      console.error('Error setting up auth state listener:', error);
+      setLoading(false);
+      return () => {};
+    }
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
+      // Check if Firebase is properly configured before attempting login
+      const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+      if (!apiKey) {
+        throw new Error('Firebase environment variables are not configured. Please set them in Netlify environment variables.');
+      }
+      
       await signInWithEmailAndPassword(auth, email, password);
       // User data will be set by onAuthStateChanged
       // Wait a bit for the user data to be fetched

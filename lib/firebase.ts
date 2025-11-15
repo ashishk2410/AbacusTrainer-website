@@ -66,25 +66,40 @@ function getApp(): FirebaseApp {
   return app;
 }
 
+// Create a more complete mock auth object for when env vars are missing
+function createMockAuth(): any {
+  const mockApp = {
+    name: '[DEFAULT]',
+    options: {},
+    automaticDataCollectionEnabled: false,
+  };
+  
+  return {
+    app: mockApp,
+    currentUser: null,
+    settings: {
+      appVerificationDisabledForTesting: false,
+    },
+    onAuthStateChanged: (callback: any) => {
+      callback(null);
+      return () => {};
+    },
+    signInWithEmailAndPassword: () => {
+      return Promise.reject(new Error('Firebase environment variables are not configured. Please set them in Netlify environment variables.'));
+    },
+    signOut: () => {
+      return Promise.reject(new Error('Firebase environment variables are not configured. Please set them in Netlify environment variables.'));
+    },
+  };
+}
+
 // Lazy getters - only initialize when accessed and env vars are available
 export const auth: Auth = new Proxy({} as Auth, {
   get(target, prop) {
     // If env vars are missing, return a mock that won't crash
     if (!hasEnvVars()) {
-      // Return a mock auth object that handles common operations gracefully
-      if (prop === 'currentUser') return null;
-      if (prop === 'onAuthStateChanged') {
-        return (callback: any) => {
-          // Return a no-op unsubscribe function
-          callback(null);
-          return () => {};
-        };
-      }
-      if (prop === 'signInWithEmailAndPassword' || prop === 'signOut') {
-        return () => Promise.reject(new Error('Firebase environment variables are not configured. Please set them in Netlify environment variables.'));
-      }
-      // For other properties, return undefined or a no-op function
-      return undefined;
+      const mockAuth = createMockAuth();
+      return mockAuth[prop as string];
     }
     
     if (!authInstance) {

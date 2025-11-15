@@ -17,10 +17,10 @@ Before deploying, you need to set up environment variables in Netlify:
 3. Add the following variables:
 
 ```
-NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_firebase_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
+NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyA-68vf1Ot5lZ33_7sxGAOlHQAbtv9mBNM
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=myabacustrainer-51e6a.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=myabacustrainer-51e6a
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=myabacustrainer-51e6a.firebasestorage.app
 ```
 
 **Important**: These must start with `NEXT_PUBLIC_` to be accessible in the browser.
