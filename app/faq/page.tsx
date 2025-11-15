@@ -121,8 +121,8 @@ export default function FAQPage() {
         {
           question: 'How do I set up a practice session?',
           answer: (
-            <>
-              <p>From the Statistics Dashboard, click "Start Practice" and configure these settings:</p>
+            <React.Fragment>
+              <p>From the Statistics Dashboard, click &quot;Start Practice&quot; and configure these settings:</p>
               <ul>
                 <li><strong>Digit Range</strong>: 1D, 2D, or 3D number complexity</li>
                 <li><strong>Operation Types</strong>: Addition, subtraction, multiplication, division</li>
@@ -130,7 +130,7 @@ export default function FAQPage() {
                 <li><strong>Question Count</strong>: Number of questions per session</li>
                 <li><strong>Speech Settings</strong>: TTS speed and gap preferences</li>
               </ul>
-            </>
+            </React.Fragment>
           )
         },
         {
