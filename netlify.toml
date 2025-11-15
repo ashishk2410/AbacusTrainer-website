@@ -7,5 +7,8 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  # Firebase API keys are public (client-side) and safe to expose
+  # Exclude documentation files from secrets scanning
+  SECRETS_SCAN_OMIT_PATHS = "DEPLOYMENT.md,IMPLEMENTATION_PLAN.md,README.md,NETLIFY_ENV_SETUP.md"
 
 

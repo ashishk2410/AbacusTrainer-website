@@ -25,6 +25,14 @@ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=myabacustrainer-51e6a.firebasestorage.app
 
 **Important**: These must start with `NEXT_PUBLIC_` to be accessible in the browser.
 
+4. **Configure Secrets Scanning** (Required to prevent build failures):
+   - Add one more environment variable:
+   - Key: `SECRETS_SCAN_OMIT_KEYS`
+   - Value: `NEXT_PUBLIC_FIREBASE_API_KEY`
+   - Scope: All scopes
+   
+   **Why?** Firebase API keys are public (client-side) and safe to expose. This tells Netlify's secrets scanner to ignore them during builds.
+
 ## Step 2: Deploy to Netlify
 
 ### Option A: Deploy via Git (Recommended)
