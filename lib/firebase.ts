@@ -4,20 +4,19 @@ import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
-// Check if we're in a build context (static generation)
-// During build, env vars might not be available or we're generating static pages
-const isBuildTime = typeof window === 'undefined' && (
-  process.env.NEXT_PHASE === 'phase-production-build' ||
-  process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_FIREBASE_API_KEY
-);
-
 // Get environment variables
 const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
 const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
 const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
 const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
 
-// Only validate during runtime, not during build
+// Check if we're in a build context (static generation)
+// During build on Netlify, env vars might not be available during static page generation
+// We detect this by checking if we're server-side and API key is missing
+const isBuildTime = typeof window === 'undefined' && !apiKey;
+
+// Only validate during runtime (client-side or server-side with env vars)
+// Skip validation entirely during build to allow static page generation
 if (!isBuildTime && (!apiKey || !authDomain || !projectId || !storageBucket)) {
   throw new Error(
     'Missing Firebase environment variables. Please check your .env.local file.\n' +
