@@ -27,35 +27,60 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+    
     try {
+      // Check if Firebase is configured before setting up listener
+      const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+      if (!apiKey) {
+        console.warn('Firebase environment variables not configured. Auth features will be disabled.');
+        setLoading(false);
+        return;
+      }
+
       const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+        if (!mounted) return;
+        
         setUser(firebaseUser);
         if (firebaseUser && firebaseUser.email) {
           try {
             const data = await getUserByEmail(firebaseUser.email);
-            setUserData(data);
-            if (!data) {
-              console.warn(`User document not found in Firestore for email: ${firebaseUser.email}`);
+            if (mounted) {
+              setUserData(data);
+              if (!data) {
+                console.warn(`User document not found in Firestore for email: ${firebaseUser.email}`);
+              }
             }
           } catch (error) {
             console.error('Error fetching user data:', error);
-            setUserData(null);
+            if (mounted) {
+              setUserData(null);
+            }
           }
         } else {
-          setUserData(null);
+          if (mounted) {
+            setUserData(null);
+          }
         }
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       });
 
       return () => {
+        mounted = false;
         if (unsubscribe && typeof unsubscribe === 'function') {
           unsubscribe();
         }
       };
     } catch (error) {
       console.error('Error setting up auth state listener:', error);
-      setLoading(false);
-      return () => {};
+      if (mounted) {
+        setLoading(false);
+      }
+      return () => {
+        mounted = false;
+      };
     }
   }, []);
 
