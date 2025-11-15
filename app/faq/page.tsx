@@ -11,6 +11,8 @@ export default function FAQPage() {
   // Prevent hydration errors
   useEffect(() => {
     setMounted(true);
+    // Debug: Log when component mounts
+    console.log('FAQ Page mounted');
   }, []);
 
   const toggleItem = (index: number) => {
@@ -215,16 +217,8 @@ export default function FAQPage() {
     })
   })).filter(section => section.items.length > 0);
 
-  // Prevent hydration errors
-  if (!mounted) {
-    return (
-      <div style={{ minHeight: '100vh', padding: '180px 20px 40px', background: '#F9FAFB' }}>
-        <div className="container" style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
-          <p style={{ color: '#6B7280' }}>Loading...</p>
-        </div>
-      </div>
-    );
-  }
+  // Always render content - mounted check is just for preventing hydration mismatches
+  // Content will render on both server and client
 
   return (
     <div style={{ minHeight: '100vh', padding: '180px 20px 40px', background: '#F9FAFB' }}>
