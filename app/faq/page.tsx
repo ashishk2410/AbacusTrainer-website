@@ -7,12 +7,18 @@ export default function FAQPage() {
   const [openItems, setOpenItems] = useState<Set<number>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [mounted, setMounted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Prevent hydration errors
   useEffect(() => {
-    setMounted(true);
-    // Debug: Log when component mounts
-    console.log('FAQ Page mounted');
+    try {
+      setMounted(true);
+      // Debug: Log when component mounts
+      console.log('FAQ Page mounted');
+    } catch (err) {
+      console.error('FAQ Page error:', err);
+      setError(err instanceof Error ? err.message : 'Unknown error');
+    }
   }, []);
 
   const toggleItem = (index: number) => {
@@ -219,6 +225,29 @@ export default function FAQPage() {
 
   // Always render content - mounted check is just for preventing hydration mismatches
   // Content will render on both server and client
+
+  // Show error if there's one
+  if (error) {
+    return (
+      <div style={{ minHeight: '100vh', padding: '180px 20px 40px', background: '#F9FAFB' }}>
+        <div className="container" style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
+          <h1 style={{ color: '#EF4444', marginBottom: '1rem' }}>Error loading FAQ page</h1>
+          <p style={{ color: '#6B7280', marginBottom: '2rem' }}>{error}</p>
+          <Link href="/" style={{
+            padding: '0.75rem 2rem',
+            borderRadius: '0.5rem',
+            background: 'linear-gradient(135deg, #7C3AED, #EC4899)',
+            color: 'white',
+            textDecoration: 'none',
+            fontWeight: 600,
+            display: 'inline-block'
+          }}>
+            Go to Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: '100vh', padding: '180px 20px 40px', background: '#F9FAFB' }}>

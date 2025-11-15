@@ -34,11 +34,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
       if (!apiKey) {
         console.warn('Firebase environment variables not configured. Auth features will be disabled.');
-        setLoading(false);
-        return;
+        if (mounted) {
+          setLoading(false);
+        }
+        return () => {
+          mounted = false;
+        };
       }
 
-      const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      // Only call onAuthStateChanged if Firebase is properly configured
+      // Check if auth object is valid before using it
+      try {
+        // Try to access auth properties safely
+        if (!auth || typeof auth !== 'object') {
+          throw new Error('Auth object is not available');
+        }
+        
+        // Check if onAuthStateChanged exists and is a function
+        if (typeof (auth as any).onAuthStateChanged !== 'function') {
+          throw new Error('onAuthStateChanged is not available');
+        }
+      } catch (authError) {
+        console.warn('Firebase auth object is not properly initialized:', authError);
+        if (mounted) {
+          setLoading(false);
+        }
+        return () => {
+          mounted = false;
+        };
+      }
+
+      let unsubscribe: (() => void) | undefined;
+      try {
+        unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
         if (!mounted) return;
         
         setUser(firebaseUser);
@@ -67,14 +95,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       });
 
-      return () => {
-        mounted = false;
-        if (unsubscribe && typeof unsubscribe === 'function') {
-          unsubscribe();
+        return () => {
+          mounted = false;
+          if (unsubscribe && typeof unsubscribe === 'function') {
+            unsubscribe();
+          }
+        };
+      } catch (authSetupError) {
+        console.error('Error setting up auth state listener:', authSetupError);
+        if (mounted) {
+          setLoading(false);
         }
-      };
+        return () => {
+          mounted = false;
+        };
+      }
     } catch (error) {
-      console.error('Error setting up auth state listener:', error);
+      console.error('Error in AuthProvider useEffect:', error);
       if (mounted) {
         setLoading(false);
       }
