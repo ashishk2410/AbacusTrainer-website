@@ -20,20 +20,20 @@ const nunito = Nunito({
 })
 
 export const metadata: Metadata = {
-  title: 'Abacus Trainer - Start Your Math Adventure! 🎮 | Download Now',
+  title: 'Abacus Trainer - Start Your Math Adventure! | Download Now',
   description: 'Start your math adventure with Abacus Trainer! Fun, kid-friendly learning with AI-powered practice, challenges, and games. Perfect for ages 6+. Download now!',
   keywords: 'abacus, mental math, AI learning, educational app, math practice, abacus trainer, mental arithmetic, math games, learning app',
   authors: [{ name: 'Abacus Trainer' }],
   openGraph: {
     type: 'website',
     url: 'https://abacustrainer.netlify.app/',
-    title: 'Abacus Trainer - Start Your Math Adventure! 🎮',
+    title: 'Abacus Trainer - Start Your Math Adventure!',
     description: 'Fun, kid-friendly abacus learning with AI recommendations, practice challenges, and 7-day tutorial system. Perfect for ages 6+!',
     images: ['https://abacustrainer.netlify.app/images/phone-mockup.png'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Abacus Trainer - Start Your Math Adventure! 🎮',
+    title: 'Abacus Trainer - Start Your Math Adventure!',
     description: 'Fun, kid-friendly abacus learning with AI recommendations, practice challenges, and 7-day tutorial system. Perfect for ages 6+!',
     images: ['https://abacustrainer.netlify.app/images/phone-mockup.png'],
   },

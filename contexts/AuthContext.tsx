@@ -11,6 +11,15 @@ import { auth } from '@/lib/firebase';
 import { getUserByEmail } from '@/lib/firestore';
 import { User } from '@/lib/types';
 
+// Helper to check if env vars are available (same as in firebase.ts)
+function hasEnvVars(): boolean {
+  const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+  const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
+  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+  const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+  return !!(apiKey && authDomain && projectId && storageBucket);
+}
+
 interface AuthContextType {
   user: FirebaseUser | null;
   userData: User | null;
@@ -146,11 +155,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw error;
       }
       
-      // Verify auth object is properly initialized by checking for required properties
-      if (!auth || typeof auth !== 'object' || !('app' in auth)) {
+      // Verify auth object is properly initialized
+      // Since auth is a Proxy, we need to check it differently
+      if (!auth || typeof auth !== 'object') {
         const error: any = new Error('Firebase authentication is not properly initialized.');
         error.code = 'auth/configuration-error';
         throw error;
+      }
+      
+      // Try to access a property to verify the Proxy is working
+      try {
+        // Access a property to trigger the Proxy getter
+        const testProp = (auth as any).app;
+        if (!testProp) {
+          // If env vars are available, auth should have an app property
+          // If it doesn't, it means we're using the mock
+          if (hasEnvVars()) {
+            console.warn('[Auth] Env vars available but auth object seems to be mock');
+          }
+        }
+      } catch (testError) {
+        console.error('[Auth] Error accessing auth properties:', testError);
       }
       
       // Only call Firebase function if we have valid env vars
