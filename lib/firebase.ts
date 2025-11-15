@@ -5,47 +5,44 @@ import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
 // Get environment variables
-const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
-const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
-const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
-const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
-
-// Check if we're in a build context (static generation)
-// During build on Netlify, env vars might not be available during static page generation
-// We detect this by checking if we're server-side and API key is missing
-const isBuildTime = typeof window === 'undefined' && !apiKey;
-
-// Only validate during runtime (client-side or server-side with env vars)
-// Skip validation entirely during build to allow static page generation
-if (!isBuildTime && (!apiKey || !authDomain || !projectId || !storageBucket)) {
-  throw new Error(
-    'Missing Firebase environment variables. Please check your .env.local file.\n' +
-    `API Key: ${apiKey ? '✓' : '✗'}\n` +
-    `Auth Domain: ${authDomain ? '✓' : '✗'}\n` +
-    `Project ID: ${projectId ? '✓' : '✗'}\n` +
-    `Storage Bucket: ${storageBucket ? '✓' : '✗'}`
-  );
+function getEnvVars() {
+  return {
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  };
 }
 
-// Initialize Firebase (only if not already initialized and not during build)
+// Validate environment variables - only throw when actually trying to use Firebase
+function validateEnvVars() {
+  const { apiKey, authDomain, projectId, storageBucket } = getEnvVars();
+  
+  if (!apiKey || !authDomain || !projectId || !storageBucket) {
+    throw new Error(
+      'Missing Firebase environment variables. Please check your .env.local file or Netlify environment variables.\n' +
+      `API Key: ${apiKey ? '✓' : '✗'}\n` +
+      `Auth Domain: ${authDomain ? '✓' : '✗'}\n` +
+      `Project ID: ${projectId ? '✓' : '✗'}\n` +
+      `Storage Bucket: ${storageBucket ? '✓' : '✗'}`
+    );
+  }
+  
+  return { apiKey, authDomain, projectId, storageBucket };
+}
+
+// Initialize Firebase (only when actually needed)
 let app: FirebaseApp | undefined;
+let authInstance: Auth | undefined;
+let dbInstance: Firestore | undefined;
 
 function getApp(): FirebaseApp {
   if (app) {
     return app;
   }
 
-  // During build time, return a placeholder to allow static generation
-  if (isBuildTime) {
-    // Create a minimal mock app for build time
-    app = {} as FirebaseApp;
-    return app;
-  }
-
-  // Runtime initialization
-  if (!apiKey || !authDomain || !projectId || !storageBucket) {
-    throw new Error('Firebase environment variables are required at runtime');
-  }
+  // Validate environment variables when actually trying to use Firebase
+  const { apiKey, authDomain, projectId, storageBucket } = validateEnvVars();
 
   const firebaseConfig = {
     apiKey,
@@ -63,31 +60,32 @@ function getApp(): FirebaseApp {
   return app;
 }
 
-// Lazy initialization for auth and db
-let authInstance: Auth | undefined;
-let dbInstance: Firestore | undefined;
+// Lazy getters - only initialize when accessed
+export const auth: Auth = new Proxy({} as Auth, {
+  get(target, prop) {
+    if (!authInstance) {
+      authInstance = getAuth(getApp());
+    }
+    const value = (authInstance as any)[prop];
+    if (typeof value === 'function') {
+      return value.bind(authInstance);
+    }
+    return value;
+  }
+});
 
-export const auth: Auth = (() => {
-  if (isBuildTime) {
-    // Return a mock auth object during build
-    return {} as Auth;
+export const db: Firestore = new Proxy({} as Firestore, {
+  get(target, prop) {
+    if (!dbInstance) {
+      dbInstance = getFirestore(getApp());
+    }
+    const value = (dbInstance as any)[prop];
+    if (typeof value === 'function') {
+      return value.bind(dbInstance);
+    }
+    return value;
   }
-  if (!authInstance) {
-    authInstance = getAuth(getApp());
-  }
-  return authInstance;
-})();
+});
 
-export const db: Firestore = (() => {
-  if (isBuildTime) {
-    // Return a mock db object during build
-    return {} as Firestore;
-  }
-  if (!dbInstance) {
-    dbInstance = getFirestore(getApp());
-  }
-  return dbInstance;
-})();
-
-export default getApp();
+export default getApp;
 
