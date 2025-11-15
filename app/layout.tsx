@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import InviteBanner from '@/components/InviteBanner'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 
 const poppins = Poppins({
   weight: ['400', '600', '700', '800', '900'],
@@ -52,12 +53,14 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
       </head>
       <body className={`${poppins.variable} ${nunito.variable} font-primary`}>
-        <AuthProvider>
-          <InviteBanner />
-          <Navbar />
-          {children}
-          <Footer />
-        </AuthProvider>
+        <ErrorBoundary>
+          <AuthProvider>
+            <InviteBanner />
+            <Navbar />
+            {children}
+            <Footer />
+          </AuthProvider>
+        </ErrorBoundary>
       </body>
     </html>
   )
