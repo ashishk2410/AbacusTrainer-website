@@ -67,33 +67,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       let unsubscribe: (() => void) | undefined;
       try {
         unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-        if (!mounted) return;
-        
-        setUser(firebaseUser);
-        if (firebaseUser && firebaseUser.email) {
-          try {
-            const data = await getUserByEmail(firebaseUser.email);
-            if (mounted) {
-              setUserData(data);
-              if (!data) {
-                console.warn(`User document not found in Firestore for email: ${firebaseUser.email}`);
+          if (!mounted) return;
+          
+          setUser(firebaseUser);
+          if (firebaseUser && firebaseUser.email) {
+            try {
+              const data = await getUserByEmail(firebaseUser.email);
+              if (mounted) {
+                setUserData(data);
+                if (!data) {
+                  console.warn(`User document not found in Firestore for email: ${firebaseUser.email}`);
+                }
+              }
+            } catch (error) {
+              console.error('Error fetching user data:', error);
+              if (mounted) {
+                setUserData(null);
               }
             }
-          } catch (error) {
-            console.error('Error fetching user data:', error);
+          } else {
             if (mounted) {
               setUserData(null);
             }
           }
-        } else {
           if (mounted) {
-            setUserData(null);
+            setLoading(false);
           }
-        }
-        if (mounted) {
-          setLoading(false);
-        }
-      });
+        });
 
         return () => {
           mounted = false;
