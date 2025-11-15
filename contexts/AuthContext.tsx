@@ -93,6 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(firebaseUser);
           if (firebaseUser && firebaseUser.email) {
             try {
+              // Wrap in try-catch to prevent errors from breaking the app
               const data = await getUserByEmail(firebaseUser.email);
               if (mounted) {
                 setUserData(data);
@@ -101,14 +102,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 }
               }
             } catch (error) {
+              // Silently handle errors - don't break the app
               console.error('Error fetching user data:', error);
               if (mounted) {
                 setUserData(null);
+                // Still set loading to false so the app can render
+                setLoading(false);
               }
             }
           } else {
             if (mounted) {
               setUserData(null);
+              setLoading(false);
             }
           }
           if (mounted) {
@@ -201,18 +206,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // If there's a critical error, still render children but with limited functionality
-  // This ensures the app doesn't completely break
+  // Always render children - never block rendering even if there are errors
+  // This ensures static pages like FAQ work even if Firebase has issues
   return (
     <AuthContext.Provider value={{ user, userData, loading, login, logout }}>
-      {error ? (
-        <>
-          {children}
-          {/* Silently handle error - don't break the UI */}
-        </>
-      ) : (
-        children
-      )}
+      {children}
     </AuthContext.Provider>
   );
 }

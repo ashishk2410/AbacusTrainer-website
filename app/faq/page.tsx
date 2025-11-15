@@ -10,8 +10,11 @@ export default function FAQPage() {
   const [mounted, setMounted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Prevent hydration errors
+  // Prevent hydration errors - ensure this runs only on client
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+    
     try {
       setMounted(true);
       // Debug: Log when component mounts
@@ -226,6 +229,9 @@ export default function FAQPage() {
 
   // Always render content - mounted check is just for preventing hydration mismatches
   // Content will render on both server and client
+  
+  // Render immediately - don't wait for mounted state
+  // This ensures the page works even if there are client-side issues
 
   // Show error if there's one
   if (error) {
