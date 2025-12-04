@@ -1,9 +1,23 @@
 'use client'
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 export default function HomePage() {
+  const galleryImages = [
+    '/images/Gallery/screenshot-1.png',
+    '/images/Gallery/screenshot-2.png',
+    '/images/Gallery/screenshot-3.png',
+    '/images/Gallery/screenshot-4.png',
+    '/images/Gallery/screenshot-5.png',
+    '/images/Gallery/screenshot-6.png',
+    '/images/Gallery/screenshot-7.png',
+    '/images/Gallery/screenshot-8.png',
+  ];
+
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [isZoomed, setIsZoomed] = useState(false);
+
   useEffect(() => {
     // Handle smooth scrolling for anchor links
     const handleAnchorClick = (e: MouseEvent) => {
@@ -51,10 +65,65 @@ export default function HomePage() {
     };
   }, []);
 
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setIsZoomed(false);
+  };
+
+  const closeLightbox = () => {
+    setLightboxIndex(null);
+    setIsZoomed(false);
+  };
+
+  const showPrevImage = () => {
+    if (lightboxIndex === null) return;
+    setIsZoomed(false);
+    setLightboxIndex((lightboxIndex + galleryImages.length - 1) % galleryImages.length);
+  };
+
+  const showNextImage = () => {
+    if (lightboxIndex === null) return;
+    setIsZoomed(false);
+    setLightboxIndex((lightboxIndex + 1) % galleryImages.length);
+  };
+
+  // Keyboard shortcuts for gallery (Esc to close, arrows to navigate)
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeLightbox();
+      } else if (event.key === 'ArrowLeft') {
+        showPrevImage();
+      } else if (event.key === 'ArrowRight') {
+        showNextImage();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [lightboxIndex]);
+
   return (
     <>
+      {/* Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "Abacus Trainer - AI-Powered Mental Math Training",
+            "description": "Master mental math with AI-powered abacus learning app. Adaptive practice, offline mode, progress tracking. Free during beta.",
+            "url": "https://abacustrainer.netlify.app"
+          })
+        }}
+      />
       {/* Hero Section */}
-      <section id="home" className="hero">
+      <section id="home" className="hero" aria-label="Hero section">
         <div className="math-symbols-bg">
           <span className="math-sym">+</span>
           <span className="math-sym">−</span>
@@ -70,11 +139,10 @@ export default function HomePage() {
           <div className="hero-content">
             <div className="hero-text">
               <h1 className="hero-title">
-                <span className="highlight">Start Your Math Adventure!</span>
-                <br />Become a Mental Math Superstar! ⭐
+                AI-Powered Abacus &amp; Mental Math Training for Serious Learners
               </h1>
               <p className="hero-subtitle">
-                Join thousands of kids on an exciting learning journey! 🎯 Play fun challenges, watch your skills grow, and unlock amazing features step by step. Perfect for ages 6+!
+                Students practice on mobile. Teachers and centre heads track progress and gap areas on the web – all in one system.
               </p>
               
               <div className="hero-cta">
@@ -85,13 +153,16 @@ export default function HomePage() {
                   className="btn btn-primary btn-large"
                 >
                   <i className="fab fa-google-play"></i>
-                  Download on Google Play
+                  Download Student App
                 </a>
-                <a href="#pricing" className="btn btn-secondary btn-large">
-                  <i className="fas fa-rocket"></i>
-                  Try Trial Subscription
-                </a>
+                <Link href="/teacher/dashboard" className="btn btn-secondary btn-large">
+                  <i className="fas fa-tachometer-alt"></i>
+                  Open Teacher Dashboard
+                </Link>
               </div>
+              <p style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#E5E7EB' }}>
+                Free during beta • Works offline • No personal data required
+              </p>
             </div>
             
             <div className="hero-visual">
@@ -115,19 +186,25 @@ export default function HomePage() {
                 </svg>
               </div>
               <div className="phone-mockup">
-                <img src="/images/phone-mockup.png" alt="Abacus Trainer App" />
+                <img 
+                  src="/images/phone-mockup.png" 
+                  alt="Abacus Trainer mobile app - AI-powered abacus and mental math training application for Android" 
+                  loading="eager"
+                  width="300"
+                  height="600"
+                />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section id="benefits" className="benefits">
+      {/* For Students Section */}
+      <section id="for-students" className="benefits">
         <div className="container">
           <div className="section-header">
-            <h2>Why Kids Love Abacus Trainer! <span className="emoji">✨</span></h2>
-            <p>Super fun features that make learning math an awesome adventure!</p>
+            <h2>Master Mental Math with Abacus + AI</h2>
+            <p>Adaptive practice, true calculation, and gamification for serious learners.</p>
           </div>
           
           <div className="benefits-grid benefits-grid-all">
@@ -135,8 +212,8 @@ export default function HomePage() {
               <div className="benefit-icon icon-1">
                 <i className="fas fa-brain"></i>
               </div>
-              <h3>Play & Learn with AI! 🎮</h3>
-              <p>The app learns what you're awesome at and gives you perfect questions! Get better super fast with your own fun learning path!</p>
+              <h3>Adaptive Practice</h3>
+              <p>The app learns how you perform and adjusts question difficulty so you always practice at the right level.</p>
               <div className="benefit-tags">
                 <span className="tag">AI-Powered</span>
                 <span className="tag">Adaptive</span>
@@ -148,8 +225,8 @@ export default function HomePage() {
               <div className="benefit-icon icon-2">
                 <i className="fas fa-chart-line"></i>
               </div>
-              <h3>Watch Your Skills Grow! 📈</h3>
-              <p>See your scores, winning streaks, and how super awesome you're getting! All your stats update in real-time - watch yourself become a math champion!</p>
+              <h3>True Calculation</h3>
+              <p>No guessing and no multiple choice. Solve real abacus problems step-by-step and see every move on the abacus.</p>
               <div className="benefit-tags">
                 <span className="tag">Real-time</span>
                 <span className="tag">Analytics</span>
@@ -161,8 +238,8 @@ export default function HomePage() {
               <div className="benefit-icon icon-3">
                 <i className="fas fa-trophy"></i>
               </div>
-              <h3>Earn Awesome Badges! 🏆</h3>
-              <p>Unlock cool badges, collect points, and keep your winning streak going! Play fun challenges while you learn - it's like a game!</p>
+              <h3>Challenges &amp; Leaderboards</h3>
+              <p>Unlock badges, compete in challenges, and climb leaderboards to stay motivated while you practice.</p>
               <div className="benefit-tags">
                 <span className="tag">Badges</span>
                 <span className="tag">Points</span>
@@ -174,8 +251,8 @@ export default function HomePage() {
               <div className="benefit-icon icon-4">
                 <i className="fas fa-graduation-cap"></i>
               </div>
-              <h3>Friendly Guides for 7 Days! 🎓</h3>
-              <p>New? No worries! We guide you step-by-step for 7 days with fun hints and celebration animations! Features unlock as you're ready - no overwhelm!</p>
+              <h3>Step-by-Step Guidance</h3>
+              <p>Guided flows for new learners so features unlock as they are ready, without overwhelming them.</p>
               <div className="benefit-tags">
                 <span className="tag">7-Day Guide</span>
                 <span className="tag">Kid-Friendly</span>
@@ -187,8 +264,8 @@ export default function HomePage() {
               <div className="benefit-icon icon-5">
                 <i className="fas fa-users"></i>
               </div>
-              <h3>Challenge Your Friends! 👥</h3>
-              <p>Make learning super fun! Create challenges, share with friends via email or WhatsApp, and see who's winning in real-time! 🎯</p>
+              <h3>Practice Anywhere</h3>
+              <p>Offline-first design means students can practice anytime, even without internet, and sync later.</p>
               <div className="benefit-tags">
                 <span className="tag">Share Challenges</span>
                 <span className="tag">Real-time Sync</span>
@@ -196,6 +273,85 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+          <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+            <a 
+              href="https://play.google.com/store/apps/details?id=com.abacus.trainer" 
+              target="_blank" 
+              rel="noopener" 
+              className="btn btn-primary btn-large"
+            >
+              <i className="fab fa-google-play"></i>
+              Download on Google Play
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* For Teachers Section */}
+      <section id="for-teachers" style={{ padding: '4rem 2rem', background: '#F9FAFB' }}>
+        <div className="container">
+          <div className="section-header">
+            <h2>Web Dashboard for Teachers to Track Every Student</h2>
+            <p>See progress, identify weak skills, and plan targeted practice in minutes.</p>
+          </div>
+
+          <div className="features-grid" style={{ marginTop: '2rem' }}>
+            <div className="feature-card">
+              <div className="feature-icon">
+                <i className="fas fa-users"></i>
+              </div>
+              <h3>Class &amp; Student Overview</h3>
+              <p>View all students at a glance with key metrics like accuracy, sessions, and activity.</p>
+            </div>
+
+            <div className="feature-card">
+              <div className="feature-icon">
+                <i className="fas fa-chart-pie"></i>
+              </div>
+              <h3>Skill-wise Breakdown</h3>
+              <p>Analyze focus, memory, visualization, accuracy, and speed for each student.</p>
+            </div>
+
+            <div className="feature-card">
+              <div className="feature-icon">
+                <i className="fas fa-exclamation-triangle"></i>
+              </div>
+              <h3>Gap-Area Detection</h3>
+              <p>See error rate, skip rate, and consistency per abacus concept to find true weak areas.</p>
+            </div>
+
+            <div className="feature-card">
+              <div className="feature-icon">
+                <i className="fas fa-trophy"></i>
+              </div>
+              <h3>Challenges for Classes</h3>
+              <p>Create and monitor practice challenges for classes or batches, with leaderboards.</p>
+            </div>
+
+            <div className="feature-card">
+              <div className="feature-icon">
+                <i className="fas fa-globe"></i>
+              </div>
+              <h3>Works in Any Browser</h3>
+              <p>No installation needed. Access the dashboard from any modern browser.</p>
+            </div>
+          </div>
+
+          <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+            <Link href="/teacher/dashboard" className="btn btn-primary btn-large" style={{ marginRight: '1rem' }}>
+              <i className="fas fa-tachometer-alt"></i>
+              Open Teacher Dashboard
+            </Link>
+            <a 
+              href="mailto:myabacustrainer@gmail.com" 
+              className="btn btn-outline btn-large"
+            >
+              Request Access
+            </a>
+          </div>
+          <p style={{ textAlign: 'center', marginTop: '1rem', color: '#6B7280', fontSize: '0.9rem' }}>
+            Centre heads log in with their centre account and see data at teacher level.
+          </p>
         </div>
       </section>
 
@@ -525,6 +681,46 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Gallery Section */}
+      <section id="gallery" className="gallery">
+        <div className="container">
+          <div className="section-header">
+            <h2>App Screenshots &amp; Highlights</h2>
+            <p>Preview some of the key screens from the Abacus Trainer app and teacher dashboard.</p>
+          </div>
+
+          <div className="gallery-grid">
+            {galleryImages.map((src, index) => {
+              const altTexts = [
+                'Abacus Trainer app dashboard showing student progress and analytics',
+                'AI-powered practice session interface with adaptive difficulty',
+                'Abacus calculation screen with step-by-step visualization',
+                'Student progress tracking with accuracy and efficiency metrics',
+                'Teacher dashboard showing class overview and student performance',
+                'Challenge creation interface for teachers and students',
+                'Cognitive metrics dashboard displaying concentration and memory scores',
+                'Settings and profile management screen'
+              ];
+              return (
+                <button
+                  key={src}
+                  className="gallery-item"
+                  type="button"
+                  onClick={() => openLightbox(index)}
+                  aria-label={`View ${altTexts[index] || `Abacus Trainer screenshot ${index + 1}`}`}
+                >
+                  <img 
+                    src={src} 
+                    alt={altTexts[index] || `Abacus Trainer app screenshot ${index + 1} - AI-powered mental math training`}
+                    loading="lazy"
+                  />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* FAQ Section (Preview) */}
       <section id="faq" className="faq">
         <div className="container">
@@ -582,6 +778,54 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      
+      {/* Lightbox Modal for Gallery */}
+      {lightboxIndex !== null && (
+        <div className="lightbox-overlay" onClick={closeLightbox}>
+          <div
+            className="lightbox-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="lightbox-close"
+              onClick={closeLightbox}
+              aria-label="Close gallery"
+            >
+              &times;
+            </button>
+
+            <button
+              type="button"
+              className="lightbox-nav lightbox-nav-prev"
+              onClick={showPrevImage}
+              aria-label="Previous screenshot"
+            >
+              &#10094;
+            </button>
+
+            <div
+              className={`lightbox-image-wrapper ${isZoomed ? 'zoomed' : ''}`}
+              onClick={() => setIsZoomed(!isZoomed)}
+            >
+              <img
+                src={galleryImages[lightboxIndex]}
+                alt={`Abacus Trainer screenshot ${lightboxIndex + 1}`}
+                className="lightbox-image"
+              />
+            </div>
+
+            <button
+              type="button"
+              className="lightbox-nav lightbox-nav-next"
+              onClick={showNextImage}
+              aria-label="Next screenshot"
+            >
+              &#10095;
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

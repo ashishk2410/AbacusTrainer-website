@@ -4,6 +4,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { 
   User as FirebaseUser,
   signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
   signOut,
   onAuthStateChanged
 } from 'firebase/auth';
@@ -25,6 +27,7 @@ interface AuthContextType {
   userData: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -185,9 +188,76 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Only call Firebase function if we have valid env vars
       await signInWithEmailAndPassword(auth, email, password);
-      // User data will be set by onAuthStateChanged
-      // Wait a bit for the user data to be fetched
+      // Wait a bit for the user data to be fetched by onAuthStateChanged
       await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Enforce role: only teacher and centre accounts can use this portal
+      const userDoc = await getUserByEmail(email);
+      if (userDoc) {
+        const role = (userDoc as any).role;
+        if (role === 'student' || role === 'individual') {
+          await signOut(auth);
+          const error: any = new Error(
+            'Only Teacher and Centre head accounts can access this portal. Students and parents cannot log in here.'
+          );
+          error.code = 'auth/role-not-allowed';
+          throw error;
+        }
+      }
+    } catch (error: any) {
+      // Re-throw to be handled by the component
+      throw error;
+    }
+  };
+
+  const loginWithGoogle = async () => {
+    try {
+      // Check if Firebase is properly configured
+      const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+      const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
+      const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+      
+      if (!apiKey || !authDomain || !projectId) {
+        const error: any = new Error('Firebase environment variables are not configured. Please set them in Netlify environment variables.');
+        error.code = 'auth/configuration-error';
+        throw error;
+      }
+      
+      if (!auth || typeof auth !== 'object') {
+        const error: any = new Error('Firebase authentication is not properly initialized.');
+        error.code = 'auth/configuration-error';
+        throw error;
+      }
+      
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      
+      // Wait a bit for the user data to be fetched by onAuthStateChanged
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Enforce role: only teacher and centre accounts can use this portal
+      if (result.user.email) {
+        const userDoc = await getUserByEmail(result.user.email);
+        if (userDoc) {
+          const role = (userDoc as any).role;
+          if (role === 'student' || role === 'individual') {
+            await signOut(auth);
+            const error: any = new Error(
+              'Only Teacher and Centre head accounts can access this portal. Students and parents cannot log in here.'
+            );
+            error.code = 'auth/role-not-allowed';
+            throw error;
+          }
+        } else {
+          // If user doesn't exist in Firestore, sign them out
+          await signOut(auth);
+          const error: any = new Error(
+            'Your account is not registered. Please contact your administrator to set up your account.'
+          );
+          error.code = 'auth/user-not-found';
+          throw error;
+        }
+      }
     } catch (error: any) {
       // Re-throw to be handled by the component
       throw error;
@@ -209,7 +279,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Always render children - never block rendering even if there are errors
   // This ensures static pages like FAQ work even if Firebase has issues
   return (
-    <AuthContext.Provider value={{ user, userData, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, userData, loading, login, loginWithGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -65,9 +65,10 @@ export default function Navbar() {
             // Public menu for non-logged-in users
             <>
               <Link href="/#home" className="nav-link" onClick={() => setIsMenuOpen(false)}>Home</Link>
+              <Link href="/#for-students" className="nav-link" onClick={() => setIsMenuOpen(false)}>Students</Link>
+              <Link href="/#for-teachers" className="nav-link" onClick={() => setIsMenuOpen(false)}>Teachers</Link>
               <Link href="/#features" className="nav-link" onClick={() => setIsMenuOpen(false)}>Features</Link>
-              <Link href="/#how-it-works" className="nav-link" onClick={() => setIsMenuOpen(false)}>How It Works</Link>
-              <Link href="/#pricing" className="nav-link" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
+              <Link href="/blog" className="nav-link" onClick={() => setIsMenuOpen(false)}>Blog</Link>
               <Link href="/faq" className="nav-link" onClick={() => setIsMenuOpen(false)}>FAQ</Link>
               <Link href="/login" className="nav-cta" onClick={() => setIsMenuOpen(false)}>
                 <i className="fas fa-sign-in-alt"></i>

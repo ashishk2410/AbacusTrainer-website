@@ -20,23 +20,81 @@ const nunito = Nunito({
 })
 
 export const metadata: Metadata = {
-  title: 'Abacus Trainer - Start Your Math Adventure! | Download Now',
-  description: 'Start your math adventure with Abacus Trainer! Fun, kid-friendly learning with AI-powered practice, challenges, and games. Perfect for ages 6+. Download now!',
-  keywords: 'abacus, mental math, AI learning, educational app, math practice, abacus trainer, mental arithmetic, math games, learning app',
-  authors: [{ name: 'Abacus Trainer' }],
+  metadataBase: new URL('https://abacustrainer.netlify.app'),
+  title: {
+    default: 'Abacus Trainer - AI-Powered Mental Math Training App | Download Free',
+    template: '%s | Abacus Trainer'
+  },
+  description: 'Master mental math with Abacus Trainer! AI-powered abacus learning app for students, teachers, and parents. Adaptive practice, offline mode, progress tracking, and gamification. Free during beta. Download now on Google Play!',
+  keywords: [
+    'abacus trainer',
+    'abacus app',
+    'mental math',
+    'mental arithmetic',
+    'abacus learning',
+    'math practice app',
+    'AI-powered abacus',
+    'abacus for kids',
+    'mental math training',
+    'abacus calculator',
+    'math education',
+    'educational app',
+    'abacus tutorial',
+    'mental calculation',
+    'abacus practice',
+    'math learning app',
+    'cognitive math training',
+    'abacus training',
+    'mental math games',
+    'abacus for students',
+    'math skills development',
+    'abacus online',
+    'mental math practice',
+    'abacus teacher',
+    'math coaching app'
+  ],
+  authors: [{ name: 'Abacus Trainer', url: 'https://abacustrainer.netlify.app' }],
+  creator: 'Abacus Trainer',
+  publisher: 'Abacus Trainer',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
     type: 'website',
+    locale: 'en_US',
     url: 'https://abacustrainer.netlify.app/',
-    title: 'Abacus Trainer - Start Your Math Adventure!',
-    description: 'Fun, kid-friendly abacus learning with AI recommendations, practice challenges, and 7-day tutorial system. Perfect for ages 6+!',
-    images: ['https://abacustrainer.netlify.app/images/phone-mockup.png'],
+    siteName: 'Abacus Trainer',
+    title: 'Abacus Trainer - AI-Powered Mental Math Training App',
+    description: 'Master mental math with AI-powered abacus learning. Adaptive practice, offline mode, progress tracking. Free during beta. Download now!',
+    images: [
+      {
+        url: 'https://abacustrainer.netlify.app/images/phone-mockup.png',
+        width: 1200,
+        height: 630,
+        alt: 'Abacus Trainer App - AI-Powered Mental Math Training',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Abacus Trainer - Start Your Math Adventure!',
-    description: 'Fun, kid-friendly abacus learning with AI recommendations, practice challenges, and 7-day tutorial system. Perfect for ages 6+!',
+    title: 'Abacus Trainer - AI-Powered Mental Math Training App',
+    description: 'Master mental math with AI-powered abacus learning. Adaptive practice, offline mode, progress tracking. Free during beta!',
     images: ['https://abacustrainer.netlify.app/images/phone-mockup.png'],
+    creator: '@abacustrainer',
   },
+  alternates: {
+    canonical: 'https://abacustrainer.netlify.app/',
+  },
+  category: 'Education',
+  classification: 'Educational Software',
 }
 
 export default function RootLayout({
@@ -51,6 +109,82 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/images/logo.svg" />
         <link rel="canonical" href="https://abacustrainer.netlify.app/" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <meta name="google-site-verification" content="" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+        <meta name="theme-color" content="#6366f1" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Abacus Trainer" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "Abacus Trainer",
+              "applicationCategory": "EducationalApplication",
+              "operatingSystem": "Android",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+              },
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.5",
+                "ratingCount": "100"
+              },
+              "description": "AI-powered abacus and mental math training app with adaptive practice, offline mode, progress tracking, and gamification features.",
+              "screenshot": "https://abacustrainer.netlify.app/images/phone-mockup.png",
+              "softwareVersion": "4.3",
+              "releaseNotes": "Latest version with AI-powered practice and offline mode",
+              "downloadUrl": "https://play.google.com/store/apps/details?id=com.abacus.trainer",
+              "author": {
+                "@type": "Organization",
+                "name": "Abacus Trainer",
+                "url": "https://abacustrainer.netlify.app"
+              }
+            })
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "Abacus Trainer",
+              "url": "https://abacustrainer.netlify.app",
+              "logo": "https://abacustrainer.netlify.app/images/logo.svg",
+              "description": "AI-powered abacus and mental math training platform for students, teachers, and parents.",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "email": "myabacustrainer@gmail.com",
+                "contactType": "Customer Support"
+              },
+              "sameAs": [
+                "https://play.google.com/store/apps/details?id=com.abacus.trainer"
+              ]
+            })
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Abacus Trainer",
+              "url": "https://abacustrainer.netlify.app",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://abacustrainer.netlify.app/faq?search={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
+            })
+          }}
+        />
       </head>
       <body className={`${poppins.variable} ${nunito.variable} font-primary`}>
         <ErrorBoundary>

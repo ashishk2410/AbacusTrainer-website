@@ -241,7 +241,7 @@ export default function FAQPage() {
           <Link href="/" style={{
             padding: '0.75rem 2rem',
             borderRadius: '0.5rem',
-            background: 'linear-gradient(135deg, #7C3AED, #EC4899)',
+            background: 'linear-gradient(135deg, #6366f1, #f59e0b)',
             color: 'white',
             textDecoration: 'none',
             fontWeight: 600,
@@ -255,152 +255,171 @@ export default function FAQPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', padding: '180px 20px 40px', background: '#F9FAFB' }}>
-      <div className="container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
-        {/* FAQ Hero Section */}
-        <section className="faq-hero-section" style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <h1 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem', color: '#1F2937' }}>
-            Frequently Asked Questions <span className="emoji">❓</span>
-          </h1>
-          <p style={{ fontSize: '1.25rem', color: '#6B7280', marginBottom: '2rem' }}>
-            Find answers to common questions about Abacus Trainer
-          </p>
-          <div className="faq-search" style={{ position: 'relative', maxWidth: '500px', margin: '0 auto' }}>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search FAQs..."
-              className="search-input"
-              style={{
-                width: '100%',
-                padding: '1rem 3rem 1rem 1rem',
-                borderRadius: '0.75rem',
-                border: '2px solid #E5E7EB',
-                fontSize: '1rem',
-                outline: 'none'
-              }}
-            />
-            <i className="fas fa-search" style={{
-              position: 'absolute',
-              right: '1rem',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: '#6B7280'
-            }}></i>
-          </div>
-        </section>
-
-        {/* FAQ Content */}
-        <section className="faq-content-section">
-          <div className="faq-sections">
-            {filteredSections.map((section, sectionIndex) => (
-              <div key={sectionIndex} className="faq-section" style={{ marginBottom: '3rem' }}>
-                <h2 className="faq-section-title" style={{
-                  fontSize: '1.5rem',
-                  fontWeight: 700,
-                  marginBottom: '1.5rem',
-                  color: '#1F2937',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem'
-                }}>
-                  <i className={`fas ${section.icon}`} style={{ color: '#7C3AED' }}></i>
-                  {section.title}
-                </h2>
-                <div className="faq-items">
-                  {section.items.map((item, itemIndex) => {
-                    const globalIndex = sectionIndex * 1000 + itemIndex;
-                    const isOpen = openItems.includes(globalIndex);
-                    return (
-                      <div key={itemIndex} className="faq-item" style={{
-                        background: 'white',
-                        borderRadius: '0.75rem',
-                        marginBottom: '1rem',
-                        border: '1px solid #E5E7EB',
-                        overflow: 'hidden',
-                        transition: 'all 0.3s'
-                      }}>
-                        <div
-                          className="faq-question"
-                          onClick={() => toggleItem(globalIndex)}
-                          style={{
-                            padding: '1.5rem',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            background: isOpen ? '#F9FAFB' : 'white',
-                            transition: 'background 0.2s'
-                          }}
-                        >
-                          <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#1F2937', margin: 0 }}>
-                            {item.question}
-                          </h3>
-                          <i
-                            className={`fas fa-chevron-${isOpen ? 'up' : 'down'}`}
-                            style={{
-                              color: '#7C3AED',
-                              transition: 'transform 0.3s',
-                              transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)'
-                            }}
-                          ></i>
-                        </div>
-                        {isOpen && (
-                          <div className="faq-answer" style={{
-                            padding: '0 1.5rem 1.5rem 1.5rem',
-                            color: '#4B5563',
-                            lineHeight: '1.6'
-                          }}>
-                            {typeof item.answer === 'string' ? (
-                              <p style={{ margin: 0 }}>{item.answer}</p>
-                            ) : (
-                              <div style={{ margin: 0 }}>{item.answer}</div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {filteredSections.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '3rem', color: '#6B7280' }}>
-              <p style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>No FAQs found matching your search.</p>
-              <button
-                onClick={() => setSearchQuery('')}
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": allFAQItems.map(item => ({
+              "@type": "Question",
+              "name": item.question,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": typeof item.answer === 'string' ? item.answer : 'See details in the app'
+              }
+            }))
+          })
+        }}
+      />
+      <div style={{ minHeight: '100vh', padding: '180px 20px 40px', background: '#F9FAFB' }}>
+        <div className="container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          {/* FAQ Hero Section */}
+          <section className="faq-hero-section" style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            <h1 className="faq-hero-title" style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem', color: '#1F2937' }}>
+              Frequently Asked Questions <span className="emoji">❓</span>
+            </h1>
+            <p className="faq-hero-subtitle" style={{ fontSize: '1.25rem', color: '#6B7280', marginBottom: '2rem' }}>
+              Find answers to common questions about Abacus Trainer
+            </p>
+            <div className="faq-search" style={{ position: 'relative', maxWidth: '500px', margin: '0 auto' }}>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search FAQs..."
+                className="search-input"
                 style={{
-                  padding: '0.75rem 2rem',
-                  borderRadius: '0.5rem',
-                  background: 'linear-gradient(135deg, #7C3AED, #EC4899)',
-                  color: 'white',
-                  fontWeight: 600,
-                  border: 'none',
-                  cursor: 'pointer'
+                  width: '100%',
+                  padding: '1rem 3rem 1rem 1rem',
+                  borderRadius: '0.75rem',
+                  border: '2px solid #E5E7EB',
+                  fontSize: '1rem',
+                  outline: 'none'
                 }}
-              >
-                Clear Search
-              </button>
+              />
+              <i className="fas fa-search" style={{
+                position: 'absolute',
+                right: '1rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: '#6B7280'
+              }}></i>
             </div>
-          )}
-        </section>
+          </section>
 
-        {/* Back to Home */}
-        <div style={{ textAlign: 'center', marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid #E5E7EB' }}>
-          <Link href="/" style={{
-            color: '#7C3AED',
-            textDecoration: 'none',
-            fontWeight: 600,
-            fontSize: '1.125rem'
-          }}>
-            <i className="fas fa-arrow-left" style={{ marginRight: '0.5rem' }}></i>
-            Back to Home
-          </Link>
+          {/* FAQ Content */}
+          <section className="faq-content-section">
+            <div className="faq-sections">
+              {filteredSections.map((section, sectionIndex) => (
+                <div key={sectionIndex} className="faq-section" style={{ marginBottom: '3rem' }}>
+                  <h2 className="faq-section-title" style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 700,
+                    marginBottom: '1.5rem',
+                    color: '#1F2937',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem'
+                  }}>
+                    <i className={`fas ${section.icon}`} style={{ color: '#6366f1' }}></i>
+                    {section.title}
+                  </h2>
+                  <div className="faq-items">
+                    {section.items.map((item, itemIndex) => {
+                      const globalIndex = sectionIndex * 1000 + itemIndex;
+                      const isOpen = openItems.includes(globalIndex);
+                      return (
+                        <div key={itemIndex} className="faq-item" style={{
+                          background: 'white',
+                          borderRadius: '0.75rem',
+                          marginBottom: '1rem',
+                          border: '1px solid #E5E7EB',
+                          overflow: 'hidden',
+                          transition: 'all 0.3s'
+                        }}>
+                          <div
+                            className="faq-question"
+                            onClick={() => toggleItem(globalIndex)}
+                            style={{
+                              padding: '1.5rem',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              background: isOpen ? '#F9FAFB' : 'white',
+                              transition: 'background 0.2s'
+                            }}
+                          >
+                            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#1F2937', margin: 0 }}>
+                              {item.question}
+                            </h3>
+                            <i
+                              className={`fas fa-chevron-${isOpen ? 'up' : 'down'}`}
+                              style={{
+                                color: '#6366f1',
+                                transition: 'transform 0.3s',
+                                transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                              }}
+                            ></i>
+                          </div>
+                          {isOpen && (
+                            <div className="faq-answer" style={{
+                              padding: '0 1.5rem 1.5rem 1.5rem',
+                              color: '#4B5563',
+                              lineHeight: '1.6'
+                            }}>
+                              {typeof item.answer === 'string' ? (
+                                <p style={{ margin: 0 }}>{item.answer}</p>
+                              ) : (
+                                <div style={{ margin: 0 }}>{item.answer}</div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {filteredSections.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '3rem', color: '#6B7280' }}>
+                <p style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>No FAQs found matching your search.</p>
+                <button
+                  onClick={() => setSearchQuery('')}
+                  style={{
+                    padding: '0.75rem 2rem',
+                    borderRadius: '0.5rem',
+                    background: 'linear-gradient(135deg, #6366f1, #f59e0b)',
+                    color: 'white',
+                    fontWeight: 600,
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Clear Search
+                </button>
+              </div>
+            )}
+          </section>
+
+          {/* Back to Home */}
+          <div style={{ textAlign: 'center', marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid #E5E7EB' }}>
+            <Link href="/" style={{
+              color: '#6366f1',
+              textDecoration: 'none',
+              fontWeight: 600,
+              fontSize: '1.125rem'
+            }}>
+              <i className="fas fa-arrow-left" style={{ marginRight: '0.5rem' }}></i>
+              Back to Home
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

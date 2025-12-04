@@ -36,6 +36,7 @@ export default function Footer() {
           <div className="footer-section">
             <h4>Support</h4>
             <ul>
+              <li><Link href="/blog">Blog</Link></li>
               <li><Link href="/faq">FAQ</Link></li>
               <li><a href="mailto:myabacustrainer@gmail.com">Contact Us</a></li>
               <li><Link href="/privacy-policy">Privacy Policy</Link></li>
