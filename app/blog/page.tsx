@@ -57,9 +57,9 @@ export default async function BlogPage({
               {posts.map((post) => {
                 // Handle both WordPress.com API and standard WordPress REST API formats
                 const postId = post.ID || post.id || 0;
-                const postTitle = typeof post.title === 'string' ? post.title : (post.title?.rendered || '');
-                const postContent = typeof post.content === 'string' ? post.content : (post.content?.rendered || '');
-                const postExcerpt = typeof post.excerpt === 'string' ? post.excerpt : (post.excerpt?.rendered || '');
+                const postTitle = typeof post.title === 'string' ? post.title : (typeof post.title === 'object' && post.title !== null ? post.title.rendered : '');
+                const postContent = typeof post.content === 'string' ? post.content : (typeof post.content === 'object' && post.content !== null ? post.content.rendered : '');
+                const postExcerpt = typeof post.excerpt === 'string' ? post.excerpt : (typeof post.excerpt === 'object' && post.excerpt !== null ? post.excerpt.rendered : '');
                 const postDate = post.date || '';
                 const postSlug = post.slug || '';
                 

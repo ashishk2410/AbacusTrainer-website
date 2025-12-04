@@ -3,22 +3,27 @@
 const WORDPRESS_SITE = 'abacustrainernetlify.wordpress.com';
 const WORDPRESS_API_URL = `https://public-api.wordpress.com/rest/v1.1/sites/${WORDPRESS_SITE}`;
 
+// WordPress field can be either a string (WordPress.com API) or an object with rendered (standard WP REST API)
+type WPField = string | { rendered: string };
+
 export interface WordPressPost {
-  ID: number;
+  ID?: number;
   date: string;
-  modified: string;
+  modified?: string;
   slug: string;
   status: string;
-  type: string;
-  link: string;
-  title: string;
-  content: string;
-  excerpt: string;
-  author: {
+  type?: string;
+  link?: string;
+  // WordPress.com API format (string) or standard WP REST API format (object with rendered)
+  title: WPField;
+  content: WPField;
+  excerpt: WPField;
+  // WordPress.com API format (object) or standard WP REST API format (number ID)
+  author?: {
     ID: number;
     name: string;
     URL: string;
-  };
+  } | number;
   featured_image?: string;
   post_thumbnail?: {
     URL: string;
@@ -33,16 +38,6 @@ export interface WordPressPost {
   id?: number;
   date_gmt?: string;
   modified_gmt?: string;
-  title?: {
-    rendered: string;
-  };
-  content?: {
-    rendered: string;
-  };
-  excerpt?: {
-    rendered: string;
-  };
-  author?: number;
   featured_media?: number;
   _embedded?: {
     author?: Array<{
@@ -54,6 +49,15 @@ export interface WordPressPost {
       source_url: string;
       alt_text: string;
     }>;
+  };
+  // WordPress.com API attachments format
+  attachments?: {
+    [key: string]: {
+      URL?: string;
+      thumbnails?: {
+        large?: string;
+      };
+    };
   };
 }
 

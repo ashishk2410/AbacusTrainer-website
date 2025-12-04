@@ -18,10 +18,10 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     };
   }
 
-  // Handle both formats
-  const postTitle = typeof post.title === 'string' ? post.title : (post.title?.rendered || '');
-  const postExcerpt = typeof post.excerpt === 'string' ? post.excerpt : (post.excerpt?.rendered || '');
-  const excerpt = postExcerpt.replace(/<[^>]*>/g, '').substring(0, 160);
+  // Handle both formats - WordPress.com API (string) or standard WP REST API (object with rendered)
+  const postTitle = typeof post.title === 'string' ? post.title : (typeof post.title === 'object' && post.title !== null ? post.title.rendered : '');
+  const postExcerpt = typeof post.excerpt === 'string' ? post.excerpt : (typeof post.excerpt === 'object' && post.excerpt !== null ? post.excerpt.rendered : '');
+  const excerpt = String(postExcerpt).replace(/<[^>]*>/g, '').substring(0, 160);
   
   let featuredImage: string | undefined;
   if ((post as any).attachments && Object.keys((post as any).attachments).length > 0) {
@@ -60,9 +60,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   }
 
   // Handle both WordPress.com API and standard WordPress REST API formats
-  const postTitle = typeof post.title === 'string' ? post.title : (post.title?.rendered || '');
-  const postContent = typeof post.content === 'string' ? post.content : (post.content?.rendered || '');
-  const postExcerpt = typeof post.excerpt === 'string' ? post.excerpt : (post.excerpt?.rendered || '');
+  // WordPress.com API returns strings, standard WP REST API returns objects with rendered property
+  const postTitle = typeof post.title === 'string' ? post.title : (typeof post.title === 'object' && post.title !== null ? post.title.rendered : '');
+  const postContent = typeof post.content === 'string' ? post.content : (typeof post.content === 'object' && post.content !== null ? post.content.rendered : '');
+  const postExcerpt = typeof post.excerpt === 'string' ? post.excerpt : (typeof post.excerpt === 'object' && post.excerpt !== null ? post.excerpt.rendered : '');
   const postDate = post.date || '';
   
   // Get featured image - WordPress.com uses attachments, standard WP uses _embedded
