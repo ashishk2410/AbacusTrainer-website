@@ -46,7 +46,7 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
         alignItems: 'center',
         justifyContent: 'center',
         background: 'linear-gradient(135deg, #FF6B6B 0%, #FECA57 50%, #48DBFB 100%)',
-        padding: '180px 20px 40px'
+        padding: '180px 0 40px'
       }}>
         <div style={{ textAlign: 'center', color: 'white' }}>
           <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>Loading...</div>
@@ -65,7 +65,7 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
         alignItems: 'center',
         justifyContent: 'center',
         background: '#F9FAFB',
-        padding: '180px 20px 40px'
+        padding: '180px 0 40px'
       }}>
         <div style={{ textAlign: 'center', maxWidth: '500px' }}>
           <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '1rem', color: '#1F2937' }}>
@@ -102,7 +102,7 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
         alignItems: 'center',
         justifyContent: 'center',
         background: 'linear-gradient(135deg, #FF6B6B 0%, #FECA57 50%, #48DBFB 100%)',
-        padding: '180px 20px 40px'
+        padding: '180px 0 40px'
       }}>
         <div style={{ textAlign: 'center', color: 'white' }}>
           <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>Redirecting...</div>
@@ -120,7 +120,7 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
         alignItems: 'center',
         justifyContent: 'center',
         background: '#F9FAFB',
-        padding: '180px 20px 40px'
+        padding: '180px 0 40px'
       }}>
         <div style={{ textAlign: 'center', maxWidth: '500px' }}>
           <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '1rem', color: '#1F2937' }}>

@@ -7,11 +7,11 @@ export default function TermsPage() {
   return (
     <div style={{ 
       minHeight: '100vh', 
-      padding: '180px 20px 40px', 
+      padding: '180px 0 40px', 
       background: '#F8FAFC',
       fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial'
     }}>
-      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '28px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
         <div style={{
           background: '#FFFFFF',
           borderRadius: '12px',

@@ -234,8 +234,8 @@ export default function FAQPage() {
   // Show error if there's one
   if (error) {
     return (
-      <div style={{ minHeight: '100vh', padding: '180px 20px 40px', background: '#F9FAFB' }}>
-        <div className="container" style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
+      <div style={{ minHeight: '100vh', padding: '180px 10% 40px', background: '#F9FAFB' }}>
+        <div className="container" style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
           <h1 style={{ color: '#EF4444', marginBottom: '1rem' }}>Error loading FAQ page</h1>
           <p style={{ color: '#6B7280', marginBottom: '2rem' }}>{error}</p>
           <Link href="/" style={{
@@ -256,31 +256,55 @@ export default function FAQPage() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": allFAQItems.map(item => ({
-              "@type": "Question",
-              "name": item.question,
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": typeof item.answer === 'string' ? item.answer : 'See details in the app'
-              }
-            }))
-          })
-        }}
-      />
-      <div style={{ minHeight: '100vh', padding: '180px 20px 40px', background: '#F9FAFB' }}>
-        <div className="container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
+      {mounted && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": allFAQItems.map(item => ({
+                "@type": "Question",
+                "name": item.question,
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": typeof item.answer === 'string' ? item.answer : 'See details in the app'
+                }
+              }))
+            })
+          }}
+        />
+      )}
+      <div style={{ minHeight: '100vh', padding: '180px 0 40px', background: '#F9FAFB' }}>
+        <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
           {/* FAQ Hero Section */}
-          <section className="faq-hero-section" style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <h1 className="faq-hero-title" style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem', color: '#1F2937' }}>
-              Frequently Asked Questions <span className="emoji">❓</span>
-            </h1>
-            <p className="faq-hero-subtitle" style={{ fontSize: '1.25rem', color: '#6B7280', marginBottom: '2rem' }}>
+          <section className="faq-hero-section" style={{ textAlign: 'center', marginBottom: '4rem', padding: '2.5rem 0' }}>
+            <div style={{
+              background: 'linear-gradient(135deg, #1e3a8a, #1e40af)',
+              borderRadius: '1rem',
+              padding: '2.5rem 2rem',
+              marginBottom: '2rem'
+            }}>
+              <h1 className="faq-hero-title" style={{ 
+                fontSize: '2.5rem', 
+                fontWeight: 800, 
+                marginBottom: '0.5rem', 
+                color: '#FFFFFF',
+                fontFamily: 'var(--font-secondary)',
+                letterSpacing: '-0.02em',
+                lineHeight: '1.2'
+              }}>
+                FREQUENTLY ASKED QUESTIONS
+              </h1>
+            </div>
+            <p className="faq-hero-subtitle" style={{ 
+              fontSize: '1.125rem', 
+              color: '#6B7280', 
+              marginBottom: '0',
+              lineHeight: '1.6',
+              maxWidth: '700px',
+              margin: '0 auto'
+            }}>
               Find answers to common questions about Abacus Trainer
             </p>
             <div className="faq-search" style={{ position: 'relative', maxWidth: '500px', margin: '0 auto' }}>
@@ -313,17 +337,20 @@ export default function FAQPage() {
           <section className="faq-content-section">
             <div className="faq-sections">
               {filteredSections.map((section, sectionIndex) => (
-                <div key={sectionIndex} className="faq-section" style={{ marginBottom: '3rem' }}>
+                <div key={sectionIndex} className="faq-section" style={{ marginBottom: '3.5rem' }}>
                   <h2 className="faq-section-title" style={{
                     fontSize: '1.5rem',
                     fontWeight: 700,
-                    marginBottom: '1.5rem',
+                    marginBottom: '1.75rem',
                     color: '#1F2937',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.75rem'
+                    gap: '0.75rem',
+                    fontFamily: 'var(--font-secondary)',
+                    lineHeight: '1.4',
+                    letterSpacing: '-0.01em'
                   }}>
-                    <i className={`fas ${section.icon}`} style={{ color: '#6366f1' }}></i>
+                    <i className={`fas ${section.icon}`} style={{ color: '#6366f1', fontSize: '1.25rem' }}></i>
                     {section.title}
                   </h2>
                   <div className="faq-items">
@@ -352,7 +379,15 @@ export default function FAQPage() {
                               transition: 'background 0.2s'
                             }}
                           >
-                            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#1F2937', margin: 0 }}>
+                            <h3 style={{ 
+                              fontSize: '1.125rem', 
+                              fontWeight: 600, 
+                              color: '#1F2937', 
+                              margin: 0,
+                              fontFamily: 'var(--font-primary)',
+                              lineHeight: '1.5',
+                              letterSpacing: '0.01em'
+                            }}>
                               {item.question}
                             </h3>
                             <i
@@ -368,7 +403,9 @@ export default function FAQPage() {
                             <div className="faq-answer" style={{
                               padding: '0 1.5rem 1.5rem 1.5rem',
                               color: '#4B5563',
-                              lineHeight: '1.6'
+                              lineHeight: '1.75',
+                              fontSize: '1rem',
+                              fontFamily: 'var(--font-primary)'
                             }}>
                               {typeof item.answer === 'string' ? (
                                 <p style={{ margin: 0 }}>{item.answer}</p>

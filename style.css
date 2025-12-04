@@ -88,7 +88,7 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 var(--space-lg);
+    padding: 0 max(10vw, 1rem); /* Max 10% padding on each side, minimum 1rem */
 }
 
 /* ============================================
@@ -1218,7 +1218,7 @@ body:has(.invite-banner) .navbar {
 
 .audience-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--space-xl);
 }
 
@@ -1276,6 +1276,10 @@ body:has(.invite-banner) .navbar {
     text-align: center;
     transition: var(--transition-normal);
     border: 3px solid transparent;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 400px;
 }
 
 .audience-card:hover {
@@ -1318,6 +1322,7 @@ body:has(.invite-banner) .navbar {
 .audience-card ul {
     list-style: none;
     text-align: left;
+    flex-grow: 1;
 }
 
 .audience-card li {
@@ -1885,7 +1890,7 @@ body:has(.invite-banner) .navbar {
 }
 
 .faq-sections {
-    max-width: 1000px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
@@ -2099,13 +2104,26 @@ body:has(.invite-banner) .navbar {
 
 .lightbox-close {
     position: absolute;
-    top: -40px;
-    right: 0;
-    background: transparent;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.5);
     border: none;
     color: #fff;
-    font-size: 2rem;
+    font-size: 2.5rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    z-index: 2001;
+    border-radius: 50%;
+    transition: background 0.2s;
+    line-height: 1;
+}
+
+.lightbox-close:hover {
+    background: rgba(0, 0, 0, 0.7);
 }
 
 .lightbox-nav {
@@ -2116,12 +2134,19 @@ body:has(.invite-banner) .navbar {
     border: none;
     color: #fff;
     font-size: 2rem;
-    width: 40px;
-    height: 60px;
+    width: 60px;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    z-index: 2001;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.lightbox-nav:hover {
+    background: rgba(0, 0, 0, 0.7);
 }
 
 .lightbox-nav-prev {
@@ -2388,9 +2413,16 @@ body:has(.invite-banner) .navbar {
     
     .benefits-grid,
     .features-grid,
-    .audience-grid,
+    .audience-grid {
+        grid-template-columns: 1fr;
+    }
+    
     .steps-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .audience-card {
+        min-height: auto;
     }
     
     .invite-content {
@@ -2403,7 +2435,7 @@ body:has(.invite-banner) .navbar {
 /* Tablet specific styles (768px - 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
     .container {
-        padding: 0 var(--space-md);
+        padding: 0 max(10vw, 1rem); /* Max 10% padding on each side */
     }
     
     .hero-title {
@@ -2464,7 +2496,7 @@ body:has(.invite-banner) .navbar {
     }
     
     .container {
-        padding: 0 var(--space-sm);
+        padding: 0 max(5vw, 1rem); /* Max 5% padding on mobile (smaller screens need less padding) */
     }
     
     .gallery-item img {
@@ -2520,7 +2552,7 @@ body:has(.invite-banner) .navbar {
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, #6366f1 0%, #f59e0b 50%, #10b981 100%);
-    padding: 140px 16px 32px;
+    padding: 140px 10% 32px;
 }
 
 .login-card {
@@ -2535,7 +2567,7 @@ body:has(.invite-banner) .navbar {
 
 @media (max-width: 768px) {
     .login-container {
-        padding: 120px 12px 24px;
+        padding: 120px 5% 24px;
     }
     
     .login-card {
@@ -2547,7 +2579,7 @@ body:has(.invite-banner) .navbar {
 
 @media (max-width: 480px) {
     .login-container {
-        padding: 100px 8px 20px;
+        padding: 100px 5% 20px;
     }
     
     .login-card {
@@ -2596,7 +2628,7 @@ body:has(.invite-banner) .navbar {
 @media (max-width: 768px) {
     .privacy-policy-container,
     .terms-container {
-        padding: 120px 16px 32px !important;
+        padding: 120px 5% 32px !important;
     }
     
     .privacy-policy-content,
@@ -2608,7 +2640,7 @@ body:has(.invite-banner) .navbar {
 @media (max-width: 480px) {
     .privacy-policy-container,
     .terms-container {
-        padding: 100px 12px 24px !important;
+        padding: 100px 5% 24px !important;
     }
     
     .privacy-policy-content,
@@ -2827,6 +2859,20 @@ body:has(.invite-banner) .navbar {
 
 .blog-content em {
     font-style: italic;
+}
+
+/* Blog listing grid responsive */
+@media (max-width: 1024px) {
+    .blog-listing-grid {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .blog-listing-grid {
+        gap: 1.5rem !important;
+    }
 }
 
 /* Blog pages responsive */

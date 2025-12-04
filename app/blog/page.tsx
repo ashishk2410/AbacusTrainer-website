@@ -30,21 +30,26 @@ export default async function BlogPage({
   searchParams: { page?: string };
 }) {
   const currentPage = parseInt(searchParams.page || '1', 10);
-  const { posts, total, totalPages } = await getWordPressPosts(currentPage, 10);
+  let posts: any[] = [];
+  let total = 0;
+  let totalPages = 0;
+  
+  try {
+    const result = await getWordPressPosts(currentPage, 10);
+    posts = result?.posts || [];
+    total = result?.total || 0;
+    totalPages = result?.totalPages || 0;
+  } catch (error: any) {
+    console.error('Error fetching blog posts:', error);
+    // Continue with empty posts array - don't throw to prevent 500 error
+    posts = [];
+    total = 0;
+    totalPages = 0;
+  }
 
   return (
-    <div style={{ minHeight: '100vh', padding: '180px 20px 40px', background: '#F9FAFB' }}>
-      <div className="container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
-        {/* Blog Header */}
-        <section style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <h1 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem', color: '#1F2937' }}>
-            Blog <span className="emoji">📝</span>
-          </h1>
-          <p style={{ fontSize: '1.25rem', color: '#6B7280', marginBottom: '2rem' }}>
-            Latest news, updates, and insights about Abacus Trainer and mental math training
-          </p>
-        </section>
-
+    <div style={{ minHeight: '100vh', padding: '180px 0 40px', background: '#F9FAFB' }}>
+      <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
         {/* Blog Posts List */}
         {posts.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem', color: '#6B7280' }}>
@@ -53,33 +58,61 @@ export default async function BlogPage({
           </div>
         ) : (
           <>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginBottom: '3rem' }}>
-              {posts.map((post) => {
-                // Handle both WordPress.com API and standard WordPress REST API formats
-                const postId = post.ID || post.id || 0;
-                const postTitle = typeof post.title === 'string' ? post.title : (typeof post.title === 'object' && post.title !== null ? post.title.rendered : '');
-                const postContent = typeof post.content === 'string' ? post.content : (typeof post.content === 'object' && post.content !== null ? post.content.rendered : '');
-                const postExcerpt = typeof post.excerpt === 'string' ? post.excerpt : (typeof post.excerpt === 'object' && post.excerpt !== null ? post.excerpt.rendered : '');
-                const postDate = post.date || '';
-                const postSlug = post.slug || '';
+            <div className="blog-listing-grid" style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '2.5rem',
+              marginBottom: '5rem'
+            }}>
+              {posts.map((post, index) => {
+                // Safety check - ensure post exists
+                if (!post) return null;
                 
-                // Get featured image - WordPress.com uses attachments, standard WP uses _embedded
-                let featuredImage: string | undefined;
-                if ((post as any).attachments && Object.keys((post as any).attachments).length > 0) {
-                  // WordPress.com format - get first attachment URL
-                  const firstAttachment = Object.values((post as any).attachments)[0] as any;
-                  featuredImage = firstAttachment?.URL || firstAttachment?.thumbnails?.large;
-                } else if (post._embedded?.['wp:featuredmedia']?.[0]?.source_url) {
-                  // Standard WordPress REST API format
-                  featuredImage = post._embedded['wp:featuredmedia'][0].source_url;
-                } else if ((post as any).featured_image) {
-                  featuredImage = (post as any).featured_image;
-                }
-                
-                // Get author - WordPress.com has author object, standard WP uses _embedded
-                const author = (post as any).author?.name || post._embedded?.author?.[0]?.name;
-                
-                const excerpt = getExcerpt(postExcerpt || postContent, 200);
+                try {
+                  // Handle both WordPress.com API and standard WordPress REST API formats
+                  const postId = post.ID || post.id || index;
+                  const postTitle = typeof post.title === 'string' 
+                    ? post.title 
+                    : (typeof post.title === 'object' && post.title !== null && 'rendered' in post.title)
+                      ? String(post.title.rendered)
+                      : 'Untitled Post';
+                  const postContent = typeof post.content === 'string' 
+                    ? post.content 
+                    : (typeof post.content === 'object' && post.content !== null && 'rendered' in post.content)
+                      ? String(post.content.rendered)
+                      : '';
+                  const postExcerpt = typeof post.excerpt === 'string' 
+                    ? post.excerpt 
+                    : (typeof post.excerpt === 'object' && post.excerpt !== null && 'rendered' in post.excerpt)
+                      ? String(post.excerpt.rendered)
+                      : '';
+                  const postDate = post.date || '';
+                  const postSlug = post.slug || `post-${postId}`;
+                  
+                  // Get featured image - WordPress.com uses attachments, standard WP uses _embedded
+                  let featuredImage: string | undefined;
+                  try {
+                    if ((post as any).attachments && Object.keys((post as any).attachments).length > 0) {
+                      // WordPress.com format - get first attachment URL
+                      const firstAttachment = Object.values((post as any).attachments)[0] as any;
+                      featuredImage = firstAttachment?.URL || firstAttachment?.thumbnails?.large;
+                    } else if (post._embedded?.['wp:featuredmedia']?.[0]?.source_url) {
+                      // Standard WordPress REST API format
+                      featuredImage = post._embedded['wp:featuredmedia'][0].source_url;
+                    } else if ((post as any).featured_image) {
+                      featuredImage = (post as any).featured_image;
+                    }
+                  } catch (imgError) {
+                    // Ignore image errors
+                    console.warn('Error extracting featured image:', imgError);
+                  }
+                  
+                  // Get author - WordPress.com has author object, standard WP uses _embedded
+                  const author = (post as any).author?.name || post._embedded?.author?.[0]?.name;
+                  
+                  // Ensure we have a string for excerpt
+                  const excerptText = postExcerpt || postContent || '';
+                  const excerpt = getExcerpt(excerptText, 200);
 
                 return (
                   <article
@@ -106,20 +139,38 @@ export default async function BlogPage({
                         />
                       </div>
                     )}
-                    <div style={{ padding: '2rem' }}>
-                      <div style={{ marginBottom: '1rem', display: 'flex', gap: '1rem', alignItems: 'center', fontSize: '0.875rem', color: '#6B7280' }}>
+                    <div style={{ padding: '2rem 2.5rem' }}>
+                      <div style={{ 
+                        marginBottom: '1.5rem', 
+                        display: 'flex', 
+                        gap: '1rem', 
+                        alignItems: 'center', 
+                        fontSize: '0.875rem', 
+                        color: '#6B7280',
+                        fontFamily: 'var(--font-primary)',
+                        lineHeight: '1.6',
+                        fontWeight: 400
+                      }}>
                         <span>{formatDate(postDate)}</span>
                         {author && (
                           <>
-                            <span>•</span>
+                            <span style={{ color: '#D1D5DB' }}>•</span>
                             <span>By {author}</span>
                           </>
                         )}
                       </div>
-                      <h2 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '1rem', color: '#1F2937' }}>
+                      <h2 style={{ 
+                        fontSize: '1.625rem', 
+                        fontWeight: 700, 
+                        marginBottom: '1.5rem', 
+                        color: '#1F2937',
+                        fontFamily: 'var(--font-secondary)',
+                        lineHeight: '1.4',
+                        letterSpacing: '-0.01em'
+                      }}>
                         <Link
                           href={`/blog/${postSlug}`}
-                          style={{ color: 'inherit', textDecoration: 'none' }}
+                          style={{ color: 'inherit', textDecoration: 'none', transition: 'color 0.2s' }}
                         >
                           <span dangerouslySetInnerHTML={{ __html: postTitle }} />
                         </Link>
@@ -127,8 +178,11 @@ export default async function BlogPage({
                       <div
                         style={{
                           color: '#4B5563',
-                          lineHeight: '1.7',
-                          marginBottom: '1.5rem',
+                          lineHeight: '1.75',
+                          marginBottom: '2rem',
+                          fontSize: '1rem',
+                          fontFamily: 'var(--font-primary)',
+                          fontWeight: 400
                         }}
                         dangerouslySetInnerHTML={{ __html: excerpt }}
                       />
@@ -150,6 +204,11 @@ export default async function BlogPage({
                     </div>
                   </article>
                 );
+                } catch (postError) {
+                  // Log error but don't break the page - return null for this post
+                  console.error('Error rendering blog post:', postError);
+                  return null;
+                }
               })}
             </div>
 

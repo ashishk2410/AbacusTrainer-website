@@ -82,7 +82,10 @@ export async function getWordPressPosts(
     const response = await fetch(
       `${WORDPRESS_API_URL}/posts?number=${perPage}&page=${page}&status=publish&order_by=date&order=DESC`,
       {
-        next: { revalidate: 300 } // Revalidate every 5 minutes for faster updates
+        next: { revalidate: 300 }, // Revalidate every 5 minutes for faster updates
+        headers: {
+          'Accept': 'application/json',
+        },
       }
     );
 
@@ -91,7 +94,10 @@ export async function getWordPressPosts(
       const fallbackResponse = await fetch(
         `https://${WORDPRESS_SITE}/wp-json/wp/v2/posts?_embed&page=${page}&per_page=${perPage}&status=publish`,
         {
-          next: { revalidate: 300 }
+          next: { revalidate: 300 },
+          headers: {
+            'Accept': 'application/json',
+          },
         }
       );
 
@@ -99,30 +105,41 @@ export async function getWordPressPosts(
         throw new Error(`WordPress API error: ${response.status}`);
       }
 
-      const allPosts: WordPressPost[] = await fallbackResponse.json();
+      const allPosts: any = await fallbackResponse.json();
+      
+      // Ensure we have an array
+      const postsArray: WordPressPost[] = Array.isArray(allPosts) ? allPosts : [];
       
       // Filter to ensure only published posts are returned (extra safety check)
-      const posts = allPosts.filter(post => {
+      const posts = postsArray.filter(post => {
+        if (!post) return false;
         const status = post.status || (post as any).status;
         return status === 'publish';
       });
-      const total = parseInt(fallbackResponse.headers.get('x-wp-total') || '0', 10);
-      const totalPages = parseInt(fallbackResponse.headers.get('x-wp-totalpages') || '0', 10);
+      const total = parseInt(fallbackResponse.headers.get('x-wp-total') || '0', 10) || 0;
+      const totalPages = parseInt(fallbackResponse.headers.get('x-wp-totalpages') || '0', 10) || 0;
 
       return { posts, total, totalPages };
     }
 
     const data = await response.json();
-    const allPosts: WordPressPost[] = data.posts || [];
+    
+    // Handle WordPress.com API response format
+    if (!data || typeof data !== 'object') {
+      throw new Error('Invalid WordPress API response');
+    }
+    
+    const allPosts: WordPressPost[] = Array.isArray(data.posts) ? data.posts : [];
     
     // Filter to ensure only published posts are returned (extra safety check)
-    const posts = allPosts.filter(post => post.status === 'publish');
-    const total = data.found || posts.length;
-    const totalPages = Math.ceil(total / perPage);
+    const posts = allPosts.filter(post => post && post.status === 'publish');
+    const total = data.found || posts.length || 0;
+    const totalPages = Math.ceil(total / perPage) || 0;
 
     return { posts, total, totalPages };
   } catch (error) {
     console.error('Error fetching WordPress posts:', error);
+    // Return empty result instead of throwing to prevent 500 errors
     return { posts: [], total: 0, totalPages: 0 };
   }
 }
@@ -196,8 +213,10 @@ export async function getWordPressCategories(): Promise<WordPressCategory[]> {
 }
 
 // Helper function to strip HTML tags and get plain text excerpt
-export function getExcerpt(text: string, length: number = 150): string {
-  const stripped = text.replace(/<[^>]*>/g, '').replace(/&[^;]+;/g, ' ');
+export function getExcerpt(text: string | null | undefined, length: number = 150): string {
+  if (!text) return '';
+  const textStr = String(text);
+  const stripped = textStr.replace(/<[^>]*>/g, '').replace(/&[^;]+;/g, ' ').trim();
   return stripped.length > length ? stripped.substring(0, length) + '...' : stripped;
 }
 

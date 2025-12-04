@@ -789,7 +789,10 @@ export default function HomePage() {
             <button
               type="button"
               className="lightbox-close"
-              onClick={closeLightbox}
+              onClick={(e) => {
+                e.stopPropagation();
+                closeLightbox();
+              }}
               aria-label="Close gallery"
             >
               &times;
@@ -798,7 +801,10 @@ export default function HomePage() {
             <button
               type="button"
               className="lightbox-nav lightbox-nav-prev"
-              onClick={showPrevImage}
+              onClick={(e) => {
+                e.stopPropagation();
+                showPrevImage();
+              }}
               aria-label="Previous screenshot"
             >
               &#10094;
@@ -806,7 +812,10 @@ export default function HomePage() {
 
             <div
               className={`lightbox-image-wrapper ${isZoomed ? 'zoomed' : ''}`}
-              onClick={() => setIsZoomed(!isZoomed)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsZoomed(!isZoomed);
+              }}
             >
               <img
                 src={galleryImages[lightboxIndex]}
@@ -818,7 +827,10 @@ export default function HomePage() {
             <button
               type="button"
               className="lightbox-nav lightbox-nav-next"
-              onClick={showNextImage}
+              onClick={(e) => {
+                e.stopPropagation();
+                showNextImage();
+              }}
               aria-label="Next screenshot"
             >
               &#10095;

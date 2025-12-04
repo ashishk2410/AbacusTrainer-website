@@ -296,8 +296,8 @@ export default function StudentDetails({ studentId }: StudentDetailsProps) {
   const chartData = getChartData();
 
   return (
-    <div style={{ minHeight: '100vh', padding: '180px 20px 40px', background: '#F9FAFB' }}>
-      <div className="container" style={{ maxWidth: '1400px', margin: '0 auto' }}>
+    <div style={{ minHeight: '100vh', padding: '180px 0 40px', background: '#F9FAFB' }}>
+      <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
         <h1 style={{ 
           fontSize: '2.5rem', 
           fontWeight: 800, 
@@ -688,10 +688,10 @@ export default function StudentDetails({ studentId }: StudentDetailsProps) {
               background: '#F9FAFB',
               zIndex: 1000,
               overflowY: 'auto',
-              padding: '180px 20px 40px'
+              padding: '180px 0 40px'
             }}
           >
-            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+            <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
               {/* Header */}
               <div style={{ 
                 display: 'flex', 

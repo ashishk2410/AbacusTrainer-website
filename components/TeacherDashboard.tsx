@@ -80,7 +80,7 @@ export default function TeacherDashboard() {
     return (
       <div style={{ 
         minHeight: '100vh', 
-        padding: '180px 20px 40px', 
+        padding: '180px 0 40px', 
         background: '#F9FAFB',
         display: 'flex',
         alignItems: 'center',
@@ -97,8 +97,8 @@ export default function TeacherDashboard() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', padding: '180px 20px 40px', background: '#F9FAFB' }}>
-      <div className="container" style={{ maxWidth: '1400px', margin: '0 auto' }}>
+    <div style={{ minHeight: '100vh', padding: '180px 10% 40px', background: '#F9FAFB' }}>
+      <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
         <h1 style={{ 
           fontSize: '2.5rem', 
           fontWeight: 800, 

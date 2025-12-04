@@ -114,10 +114,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         }}
       />
 
-      <div style={{ minHeight: '100vh', padding: '180px 20px 40px', background: '#F9FAFB' }}>
-        <div className="container" style={{ maxWidth: '900px', margin: '0 auto' }}>
+      <div style={{ minHeight: '100vh', padding: '180px 0 40px', background: '#F9FAFB' }}>
+        <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
           {/* Back to Blog */}
-          <div style={{ marginBottom: '2rem' }}>
+          <div style={{ marginBottom: '2.5rem' }}>
             <Link
               href="/blog"
               style={{
@@ -128,6 +128,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 textDecoration: 'none',
                 fontWeight: 600,
                 fontSize: '1rem',
+                fontFamily: 'var(--font-primary)',
+                transition: 'color 0.2s'
               }}
             >
               <i className="fas fa-arrow-left"></i>
@@ -136,9 +138,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </div>
 
           {/* Blog Post */}
-          <article style={{ background: 'white', borderRadius: '1rem', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)' }}>
+          <article style={{ background: 'white', borderRadius: '1rem', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)' }}>
             {featuredImage && (
-              <div style={{ width: '100%', height: '400px', overflow: 'hidden' }}>
+              <div style={{ width: '100%', height: '450px', overflow: 'hidden' }}>
                     <img
                       src={featuredImage}
                       alt={postTitle.replace(/<[^>]*>/g, '')}
@@ -151,13 +153,24 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </div>
             )}
 
-            <div style={{ padding: '3rem 3.5rem' }}>
+            <div style={{ padding: '3.5rem 4rem' }}>
               {/* Post Meta */}
-              <div style={{ marginBottom: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center', fontSize: '0.875rem', color: '#6B7280', flexWrap: 'wrap' }}>
+              <div style={{ 
+                marginBottom: '2rem', 
+                display: 'flex', 
+                gap: '1rem', 
+                alignItems: 'center', 
+                fontSize: '0.875rem', 
+                color: '#6B7280', 
+                flexWrap: 'wrap',
+                fontFamily: 'var(--font-primary)',
+                lineHeight: '1.6',
+                fontWeight: 400
+              }}>
                 <span>{formatDate(postDate)}</span>
                 {author && (
                   <>
-                    <span>•</span>
+                    <span style={{ color: '#D1D5DB' }}>•</span>
                     <span>By {author}</span>
                   </>
                 )}
@@ -166,12 +179,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               {/* Post Title */}
               <h1
                 style={{
-                  fontSize: '2.5rem',
+                  fontSize: '2.75rem',
                   fontWeight: 800,
                   marginBottom: '2rem',
                   color: '#1F2937',
-                  lineHeight: '1.2',
+                  lineHeight: '1.3',
                   fontFamily: 'var(--font-secondary)',
+                  letterSpacing: '-0.02em'
                 }}
                 dangerouslySetInnerHTML={{ __html: postTitle }}
               />
