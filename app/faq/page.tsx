@@ -3,12 +3,62 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+// Category mapping: JSON key -> { title, icon }
+const categoryMapping: Record<string, { title: string; icon: string }> = {
+  general: { title: 'General Questions', icon: 'fa-mobile-alt' },
+  learning_and_practice_modes: { title: 'Learning & Practice Modes', icon: 'fa-graduation-cap' },
+  skill_practice_and_operations: { title: 'Skill Practice & Operations', icon: 'fa-calculator' },
+  ai_and_cognitive_insights: { title: 'AI & Cognitive Insights', icon: 'fa-robot' },
+  analytics_and_progress_tracking: { title: 'Analytics & Progress Tracking', icon: 'fa-chart-line' },
+  audio_and_experience: { title: 'Audio & Experience', icon: 'fa-volume-up' },
+  gamification_and_motivation: { title: 'Gamification & Motivation', icon: 'fa-trophy' },
+  challenges_and_leaderboards: { title: 'Challenges & Leaderboards', icon: 'fa-gamepad' },
+  teachers_and_dashboard: { title: 'Teachers & Dashboard', icon: 'fa-chalkboard-teacher' },
+  parents_and_home_use: { title: 'Parents & Home Use', icon: 'fa-home' },
+  technical_and_device_support: { title: 'Technical & Device Support', icon: 'fa-tools' },
+  security_and_privacy: { title: 'Security & Privacy', icon: 'fa-shield-alt' },
+  getting_started_and_access: { title: 'Getting Started & Access', icon: 'fa-play-circle' },
+};
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+interface FAQData {
+  [key: string]: FAQItem[];
+}
+
 // Ensure this component can render even if there are errors
 export default function FAQPage() {
   const [openItems, setOpenItems] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [mounted, setMounted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [faqData, setFaqData] = useState<FAQData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Load FAQ data from JSON
+  useEffect(() => {
+    const loadFAQs = async () => {
+      try {
+        const response = await fetch('/FAQs.json');
+        if (!response.ok) {
+          throw new Error('Failed to load FAQs');
+        }
+        const data: FAQData = await response.json();
+        setFaqData(data);
+      } catch (err) {
+        console.error('Error loading FAQs:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load FAQs');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadFAQs();
+  }, []);
 
   // Prevent hydration errors - ensure this runs only on client
   useEffect(() => {
@@ -17,8 +67,6 @@ export default function FAQPage() {
     
     try {
       setMounted(true);
-      // Debug: Log when component mounts
-      console.log('FAQ Page mounted');
     } catch (err) {
       console.error('FAQ Page error:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
@@ -33,170 +81,34 @@ export default function FAQPage() {
     );
   };
 
-  const faqSections = [
-    {
-      title: 'General Questions',
-      icon: 'fa-mobile-alt',
-      items: [
-        {
-          question: 'What is Abacus Trainer?',
-          answer: 'Abacus Trainer is an Android educational app designed to help students learn and practice mental arithmetic using the abacus method. It provides interactive practice sessions, progress tracking, and AI-powered question generation to enhance learning efficiency.'
-        },
-        {
-          question: 'Who can use this app?',
-          answer: (
-            <ul>
-              <li><strong>Students</strong>: Learning abacus arithmetic methods</li>
-              <li><strong>Teachers</strong>: Managing multiple student progress</li>
-              <li><strong>Parents</strong>: Monitoring child&apos;s learning progress</li>
-              <li><strong>Educational Institutions</strong>: Classroom and homework support</li>
-            </ul>
-          )
-        },
-        {
-          question: 'What Android versions are supported?',
-          answer: 'The app requires Android 8.0 (API 26) or higher and supports up to Android 15+ (API 35).'
-        },
-        {
-          question: 'Does the app work offline?',
-          answer: 'Yes! The app is designed to work entirely offline. All core features including practice sessions, AI question generation, and progress tracking work without internet connectivity.'
-        },
-        {
-          question: 'What is the current app version?',
-          answer: 'The current version is 4.3 (Build 18), released in November 2025. The app requires Android 8.0 (API 26) or higher and supports up to Android 15+ (API 35).'
-        }
-      ]
-    },
-    {
-      title: 'Tutorial System & Challenges',
-      icon: 'fa-graduation-cap',
-      items: [
-        {
-          question: 'How does the tutorial system work for new users?',
-          answer: 'New users are guided through features over 7 days with contextual hints. Tutorials appear when you first visit each screen, and completing them automatically marks them as done. This prevents overwhelm and ensures a smooth learning experience. One hint per screen keeps kids focused.'
-        },
-        {
-          question: 'Why aren&apos;t all features visible when I first open the app?',
-          answer: 'To prevent overwhelm, features are introduced progressively over 7 days. This kid-friendly approach ensures children focus on one thing at a time and learn gradually. All features are still accessible; tutorials just guide you to discover them naturally as you&apos;re ready.'
-        },
-        {
-          question: 'Can I create challenges for my students?',
-          answer: 'Yes! Teachers and students can create practice challenges. Challenges can be shared via email or WhatsApp using invite codes, and all participants&apos; progress is tracked in real-time. Created challenges, participant records, and progress all sync automatically via Firestore.'
-        },
-        {
-          question: 'How do challenges sync across devices?',
-          answer: 'Challenges are stored in Firestore and automatically sync when you&apos;re online. Created challenges, participant records, and progress are all synchronized in real-time across all devices.'
-        },
-        {
-          question: 'How do I get full access as a student for a year?',
-          answer: 'Students can use the invite code ABACUSTRAINER when creating their account to get full access for 1 year. This special offer provides all premium features including unlimited practice sessions, challenge creation, full AI recommendations, cognitive metrics dashboard, and cloud sync.'
-        }
-      ]
-    },
-    {
-      title: 'Getting Started',
-      icon: 'fa-play-circle',
-      items: [
-        {
-          question: 'How do I start my first practice session?',
-          answer: (
-            <ol>
-              <li>Open the app and you&apos;ll see the Statistics Dashboard</li>
-              <li>Click "Start Practice"</li>
-              <li>Configure your practice settings (difficulty, duration, etc.)</li>
-              <li>Choose between Traditional Practice or AI-Powered Practice</li>
-              <li>Begin your session</li>
-            </ol>
-          )
-        },
-        {
-          question: 'What&apos;s the difference between Traditional and AI-Powered Practice?',
-          answer: (
-            <ul>
-              <li><strong>Traditional Practice</strong>: Uses standard abacus arithmetic problems with fixed difficulty</li>
-              <li><strong>AI-Powered Practice</strong>: Smart question generation that adapts to your performance, focusing on areas that need improvement</li>
-            </ul>
-          )
-        },
-        {
-          question: 'Can I use the app without creating an account?',
-          answer: 'Yes! The app offers Guest Mode for quick access without account creation. However, guest users have limited features and daily usage limits.'
-        }
-      ]
-    },
-    {
-      title: 'Practice Sessions',
-      icon: 'fa-calculator',
-      items: [
-        {
-          question: 'How do I set up a practice session?',
-          answer: (
-            <React.Fragment>
-              <p>From the Statistics Dashboard, click &quot;Start Practice&quot; and configure these settings:</p>
-              <ul>
-                <li><strong>Digit Range</strong>: 1D, 2D, or 3D number complexity</li>
-                <li><strong>Operation Types</strong>: Addition, subtraction, multiplication, division</li>
-                <li><strong>Session Duration</strong>: Set custom timer (MM:SS format)</li>
-                <li><strong>Question Count</strong>: Number of questions per session</li>
-                <li><strong>Speech Settings</strong>: TTS speed and gap preferences</li>
-              </ul>
-            </React.Fragment>
-          )
-        },
-        {
-          question: 'What is OCR scanning?',
-          answer: 'OCR (Optical Character Recognition) allows you to scan practice sheets using your device camera. The app extracts questions from the image and creates practice sessions from them instantly.'
-        },
-        {
-          question: 'How does AI-powered practice work?',
-          answer: 'AI-powered practice analyzes your performance and generates questions tailored to your skill level. It focuses on areas where you need improvement and adapts difficulty based on your accuracy and speed.'
-        }
-      ]
-    },
-    {
-      title: 'Pricing & Subscriptions',
-      icon: 'fa-credit-card',
-      items: [
-        {
-          question: 'Is there a free trial?',
-          answer: 'Yes! New users get a 20-day free trial with unlimited practice sessions and questions, and access to all core features. No credit card required.'
-        },
-        {
-          question: 'What are the subscription plans?',
-          answer: (
-            <ul>
-              <li><strong>Guest Mode</strong>: Free forever with limited features (2 sessions/day, 20 questions/day)</li>
-              <li><strong>Free Trial</strong>: 20 days with full access</li>
-              <li><strong>Individual</strong>: ₹300/month for learners with all features</li>
-              <li><strong>Teacher</strong>: ₹250/month per student for educators with student management tools</li>
-            </ul>
-          )
-        },
-        {
-          question: 'What happens after my free trial ends?',
-          answer: 'After the 20-day free trial, you can continue using Guest Mode with limited features, or subscribe to Individual or Teacher plans for full access to all features.'
-        }
-      ]
-    },
-    {
-      title: 'Progress & Analytics',
-      icon: 'fa-chart-line',
-      items: [
-        {
-          question: 'What metrics does the app track?',
-          answer: 'The app tracks accuracy, efficiency (prompts per minute), streaks, cognitive metrics (concentration, memory, visualization, reaction time), and provides detailed performance trends over time.'
-        },
-        {
-          question: 'Can teachers see student progress?',
-          answer: 'Yes! Teachers can view detailed analytics for all their students including session history, performance trends, accuracy, efficiency, and cognitive metrics. Teachers can also assign levels and create improvement plans.'
-        },
-        {
-          question: 'How do I view my progress?',
-          answer: 'Your progress is displayed on the Statistics Dashboard, which shows your current stats, performance trends, achievements, and detailed session history.'
-        }
-      ]
-    }
-  ];
+  // Convert JSON data to FAQ sections format
+  const faqSections = faqData ? Object.entries(faqData).map(([categoryKey, items]) => {
+    const category = categoryMapping[categoryKey] || { 
+      title: categoryKey.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '), 
+      icon: 'fa-question-circle' 
+    };
+    return {
+      title: category.title,
+      icon: category.icon,
+      items: items.map(item => ({
+        question: item.question,
+        answer: item.answer
+      }))
+    };
+  }) : [];
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', padding: '120px 0 60px', background: '#FFFFFF' }}>
+        <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
+          <div style={{ textAlign: 'center', color: '#6B7280' }}>
+            <p style={{ fontSize: '1.125rem' }}>Loading FAQs...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Flatten FAQ items for search
   const allFAQItems = faqSections.flatMap((section, sectionIndex) =>
@@ -208,13 +120,18 @@ export default function FAQPage() {
     }))
   );
 
-  // Filter items based on search query
-  const filteredItems = searchQuery
-    ? allFAQItems.filter(item =>
-        item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (typeof item.answer === 'string' && item.answer.toLowerCase().includes(searchQuery.toLowerCase()))
-      )
-    : allFAQItems;
+  // Filter items based on search query and selected category
+  const filteredItems = allFAQItems.filter(item => {
+    // Category filter
+    const categoryMatch = selectedCategory === 'All' || item.sectionTitle === selectedCategory;
+    
+    // Search filter
+    const searchMatch = !searchQuery || 
+      item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (typeof item.answer === 'string' && item.answer.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    return categoryMatch && searchMatch;
+  });
 
   // Group filtered items back by section
   const filteredSections = faqSections.map(section => ({
@@ -225,6 +142,9 @@ export default function FAQPage() {
     })
   })).filter(section => section.items.length > 0);
 
+  // Get all unique category titles for filter buttons
+  const categories = ['All', ...faqSections.map(s => s.title)];
+
   // Always render content - mounted check is just for preventing hydration mismatches
   // Content will render on both server and client
   
@@ -234,19 +154,29 @@ export default function FAQPage() {
   // Show error if there's one
   if (error) {
     return (
-      <div style={{ minHeight: '100vh', padding: '180px 10% 40px', background: '#F9FAFB' }}>
-        <div className="container" style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
-          <h1 style={{ color: '#EF4444', marginBottom: '1rem' }}>Error loading FAQ page</h1>
-          <p style={{ color: '#6B7280', marginBottom: '2rem' }}>{error}</p>
+      <div style={{ minHeight: '100vh', padding: '120px 0 60px', background: '#FFFFFF' }}>
+        <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem', textAlign: 'center' }}>
+          <h1 style={{ color: '#EF4444', marginBottom: '1rem', fontSize: '2rem', fontWeight: 700 }}>Error loading FAQ page</h1>
+          <p style={{ color: '#6B7280', marginBottom: '2rem', fontSize: '1.125rem' }}>{error}</p>
           <Link href="/" style={{
             padding: '0.75rem 2rem',
             borderRadius: '0.5rem',
-            background: 'linear-gradient(135deg, #6366f1, #f59e0b)',
-            color: 'white',
+            background: '#6366f1',
+            color: '#FFFFFF',
             textDecoration: 'none',
             fontWeight: 600,
-            display: 'inline-block'
-          }}>
+            display: 'inline-block',
+            transition: 'all 0.25s ease-out'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#4f46e5';
+            e.currentTarget.style.transform = 'translateY(-2px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = '#6366f1';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+          >
             Go to Home
           </Link>
         </div>
@@ -275,82 +205,157 @@ export default function FAQPage() {
           }}
         />
       )}
-      <div style={{ minHeight: '100vh', padding: '180px 0 40px', background: '#F9FAFB' }}>
-        <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
+      {/* Header Section with Gradient Background */}
+      <div style={{ 
+        background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 45%, #8b5cf6 100%)',
+        padding: '90px 0 30px',
+        color: '#FFFFFF',
+        marginTop: '0'
+      }}>
+        <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
           {/* FAQ Hero Section */}
-          <section className="faq-hero-section" style={{ textAlign: 'center', marginBottom: '4rem', padding: '2.5rem 0' }}>
-            <div style={{
-              background: 'linear-gradient(135deg, #1e3a8a, #1e40af)',
-              borderRadius: '1rem',
-              padding: '2.5rem 2rem',
-              marginBottom: '2rem'
+          <section className="faq-hero-section" style={{ textAlign: 'center', marginTop: '0', paddingTop: '0', paddingBottom: '0', padding: '0' }}>
+            <h1 className="faq-hero-title" style={{ 
+              fontSize: '2.5rem', 
+              fontWeight: 800, 
+              marginTop: '0',
+              marginBottom: '1.5rem', 
+              color: '#FFFFFF',
+              fontFamily: 'var(--font-secondary)',
+              letterSpacing: '0.02em',
+              lineHeight: '1.1',
+              textTransform: 'uppercase'
             }}>
-              <h1 className="faq-hero-title" style={{ 
-                fontSize: '2.5rem', 
-                fontWeight: 800, 
-                marginBottom: '0.5rem', 
-                color: '#FFFFFF',
-                fontFamily: 'var(--font-secondary)',
-                letterSpacing: '-0.02em',
-                lineHeight: '1.2'
-              }}>
-                FREQUENTLY ASKED QUESTIONS
-              </h1>
+              FREQUENTLY ASKED QUESTIONS
+            </h1>
+            
+            {/* Category Filter Links */}
+            <div className="faq-category-filters" style={{ 
+              display: 'flex', 
+              flexWrap: 'wrap', 
+              gap: '1.25rem', 
+              justifyContent: 'center',
+              marginBottom: '1.5rem',
+              fontSize: '0.9375rem',
+              fontFamily: 'var(--font-primary)'
+            }}>
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className="faq-category-link"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#FFFFFF',
+                    fontSize: '1rem',
+                    fontWeight: selectedCategory === category ? 600 : 400,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease-out',
+                    fontFamily: 'var(--font-primary)',
+                    textDecoration: selectedCategory === category ? 'underline' : 'none',
+                    textUnderlineOffset: '4px',
+                    padding: '0.25rem 0'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (selectedCategory !== category) {
+                      e.currentTarget.style.opacity = '0.8';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = '1';
+                  }}
+                >
+                  {category}
+                </button>
+              ))}
             </div>
-            <p className="faq-hero-subtitle" style={{ 
-              fontSize: '1.125rem', 
-              color: '#6B7280', 
-              marginBottom: '0',
-              lineHeight: '1.6',
-              maxWidth: '700px',
-              margin: '0 auto'
+
+            {/* Search Bar with Button */}
+            <div className="faq-search" style={{ 
+              display: 'flex', 
+              maxWidth: '700px', 
+              margin: '0 auto',
+              background: '#FFFFFF',
+              borderRadius: '0.5rem',
+              border: '2px solid #FFFFFF',
+              overflow: 'hidden'
             }}>
-              Find answers to common questions about Abacus Trainer
-            </p>
-            <div className="faq-search" style={{ position: 'relative', maxWidth: '500px', margin: '0 auto' }}>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search FAQs..."
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    // Search is already handled by onChange
+                  }
+                }}
+                placeholder="Search FAQs"
                 className="search-input"
                 style={{
-                  width: '100%',
-                  padding: '1rem 3rem 1rem 1rem',
-                  borderRadius: '0.75rem',
-                  border: '2px solid #E5E7EB',
-                  fontSize: '1rem',
-                  outline: 'none'
+                  flex: 1,
+                  padding: '0.875rem 1.25rem',
+                  border: 'none',
+                  fontSize: '0.9375rem',
+                  outline: 'none',
+                  background: '#FFFFFF',
+                  color: '#1F2937',
+                  fontFamily: 'var(--font-primary)'
                 }}
               />
-              <i className="fas fa-search" style={{
-                position: 'absolute',
-                right: '1rem',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: '#6B7280'
-              }}></i>
+              <button
+                onClick={() => {
+                  // Search is handled by the input onChange
+                }}
+                style={{
+                  padding: '0.875rem 1.75rem',
+                  background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  fontSize: '0.9375rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-primary)',
+                  transition: 'opacity 0.2s ease-out'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = '0.9';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = '1';
+                }}
+              >
+                Search
+              </button>
             </div>
           </section>
+        </div>
+      </div>
+
+      {/* Content Section with White Background */}
+      <div style={{ 
+        background: '#F9FAFB',
+        padding: '20px 0 80px',
+        minHeight: '50vh'
+      }}>
+        <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
 
           {/* FAQ Content */}
-          <section className="faq-content-section">
+          <section className="faq-content-section" style={{ marginTop: '0', paddingTop: '0' }}>
             <div className="faq-sections">
               {filteredSections.map((section, sectionIndex) => (
-                <div key={sectionIndex} className="faq-section" style={{ marginBottom: '3.5rem' }}>
+                <div key={sectionIndex} className="faq-section" style={{ marginBottom: '2rem', marginTop: sectionIndex === 0 ? '0' : '2rem' }}>
                   <h2 className="faq-section-title" style={{
-                    fontSize: '1.5rem',
+                    fontSize: '1.125rem',
                     fontWeight: 700,
-                    marginBottom: '1.75rem',
+                    marginTop: sectionIndex === 0 ? '1rem' : '0',
+                    marginBottom: '0.75rem',
                     color: '#1F2937',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.75rem',
                     fontFamily: 'var(--font-secondary)',
-                    lineHeight: '1.4',
-                    letterSpacing: '-0.01em'
+                    lineHeight: '1.3',
+                    letterSpacing: '0.02em',
+                    textTransform: 'uppercase'
                   }}>
-                    <i className={`fas ${section.icon}`} style={{ color: '#6366f1', fontSize: '1.25rem' }}></i>
                     {section.title}
                   </h2>
                   <div className="faq-items">
@@ -359,58 +364,76 @@ export default function FAQPage() {
                       const isOpen = openItems.includes(globalIndex);
                       return (
                         <div key={itemIndex} className="faq-item" style={{
-                          background: 'white',
-                          borderRadius: '0.75rem',
-                          marginBottom: '1rem',
-                          border: '1px solid #E5E7EB',
-                          overflow: 'hidden',
-                          transition: 'all 0.3s'
+                          background: '#FFFFFF',
+                          borderBottom: '1px solid #E5E7EB',
+                          paddingBottom: isOpen ? '1rem' : '0.75rem',
+                          marginBottom: '0.75rem',
+                          transition: 'all 0.25s ease-out',
+                          minHeight: 'auto'
                         }}>
                           <div
                             className="faq-question"
                             onClick={() => toggleItem(globalIndex)}
                             style={{
-                              padding: '1.5rem',
                               cursor: 'pointer',
                               display: 'flex',
                               justifyContent: 'space-between',
-                              alignItems: 'center',
-                              background: isOpen ? '#F9FAFB' : 'white',
-                              transition: 'background 0.2s'
+                              alignItems: 'flex-start',
+                              transition: 'all 0.25s ease-out',
+                              paddingTop: '0.5rem',
+                              paddingBottom: '0.5rem'
                             }}
                           >
                             <h3 style={{ 
-                              fontSize: '1.125rem', 
-                              fontWeight: 600, 
+                              fontSize: '1rem', 
+                              fontWeight: 500, 
                               color: '#1F2937', 
                               margin: 0,
                               fontFamily: 'var(--font-primary)',
                               lineHeight: '1.5',
-                              letterSpacing: '0.01em'
+                              flex: 1,
+                              paddingRight: '1rem'
                             }}>
                               {item.question}
                             </h3>
-                            <i
-                              className={`fas fa-chevron-${isOpen ? 'up' : 'down'}`}
+                            <span
                               style={{
                                 color: '#6366f1',
-                                transition: 'transform 0.3s',
-                                transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                                fontSize: '1.25rem',
+                                fontWeight: 300,
+                                flexShrink: 0,
+                                width: '20px',
+                                height: '20px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'transform 0.25s ease-out',
+                                transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)',
+                                marginTop: '0.125rem'
                               }}
-                            ></i>
+                            >
+                              {isOpen ? '×' : '+'}
+                            </span>
                           </div>
                           {isOpen && (
                             <div className="faq-answer" style={{
-                              padding: '0 1.5rem 1.5rem 1.5rem',
+                              marginTop: '0.75rem',
                               color: '#4B5563',
-                              lineHeight: '1.75',
-                              fontSize: '1rem',
-                              fontFamily: 'var(--font-primary)'
+                              lineHeight: '1.6',
+                              fontSize: '0.9375rem',
+                              fontFamily: 'var(--font-primary)',
+                              paddingRight: '2rem',
+                              paddingBottom: '0.25rem',
+                              display: 'block',
+                              visibility: 'visible',
+                              opacity: 1,
+                              maxHeight: 'none',
+                              overflow: 'visible'
                             }}>
                               {typeof item.answer === 'string' ? (
-                                <p style={{ margin: 0 }}>{item.answer}</p>
+                                <p style={{ margin: 0, color: '#4B5563' }}>{item.answer}</p>
                               ) : (
-                                <div style={{ margin: 0 }}>{item.answer}</div>
+                                <div style={{ margin: 0, color: '#4B5563' }}>{item.answer}</div>
                               )}
                             </div>
                           )}
@@ -424,37 +447,38 @@ export default function FAQPage() {
 
             {filteredSections.length === 0 && (
               <div style={{ textAlign: 'center', padding: '3rem', color: '#6B7280' }}>
-                <p style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>No FAQs found matching your search.</p>
+                <p style={{ fontSize: '1.125rem', marginBottom: '1.5rem' }}>No FAQs found matching your search.</p>
                 <button
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedCategory('All');
+                  }}
                   style={{
-                    padding: '0.75rem 2rem',
+                    padding: '0.75rem 1.5rem',
                     borderRadius: '0.5rem',
-                    background: 'linear-gradient(135deg, #6366f1, #f59e0b)',
-                    color: 'white',
+                    background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                    color: '#FFFFFF',
                     fontWeight: 600,
                     border: 'none',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    transition: 'all 0.25s ease-out',
+                    fontSize: '0.9375rem',
+                    fontFamily: 'var(--font-primary)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = '0.9';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = '1';
+                    e.currentTarget.style.transform = 'translateY(0)';
                   }}
                 >
-                  Clear Search
+                  Clear Filters
                 </button>
               </div>
             )}
           </section>
-
-          {/* Back to Home */}
-          <div style={{ textAlign: 'center', marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid #E5E7EB' }}>
-            <Link href="/" style={{
-              color: '#6366f1',
-              textDecoration: 'none',
-              fontWeight: 600,
-              fontSize: '1.125rem'
-            }}>
-              <i className="fas fa-arrow-left" style={{ marginRight: '0.5rem' }}></i>
-              Back to Home
-            </Link>
-          </div>
         </div>
       </div>
     </>

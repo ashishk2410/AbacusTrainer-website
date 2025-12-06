@@ -230,6 +230,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       
       const provider = new GoogleAuthProvider();
+      // Customize the OAuth flow to show a better app name
+      provider.setCustomParameters({
+        prompt: 'select_account',
+        hd: '' // Allow any domain, or specify your organization domain
+      });
+      // Add additional scopes if needed
+      provider.addScope('email');
+      provider.addScope('profile');
       const result = await signInWithPopup(auth, provider);
       
       // Wait a bit for the user data to be fetched by onAuthStateChanged

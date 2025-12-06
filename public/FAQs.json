@@ -1,0 +1,260 @@
+{
+  "general": [
+    {
+      "question": "What is Abacus Trainer?",
+      "answer": "Abacus Trainer is an advanced Android app that combines traditional abacus practice with modern AI, analytics, and gamification to build strong mental math skills. It is designed as a complete ecosystem where students practice, teachers monitor progress, and parents understand real learning outcomes rather than just raw scores."
+    },
+    {
+      "question": "Who is Abacus Trainer designed for?",
+      "answer": "Abacus Trainer is ideal for abacus students, school-going children, Olympiad aspirants, and anyone who wants to improve mental calculation speed and accuracy. It also serves teachers, coaching centers, and parents by providing detailed insights, dashboards, and tools to guide and support each learner’s journey."
+    },
+    {
+      "question": "What makes Abacus Trainer different from other math apps?",
+      "answer": "Most math apps focus on quick quizzes or multiple-choice questions, but Abacus Trainer is built around real calculation and concept mastery. It offers sequential skill practice, step-by-step question review, AI-powered recommendations, cognitive insights, teacher dashboards, and offline-first architecture, making it closer to a smart digital classroom than a simple quiz app."
+    },
+    {
+      "question": "Is Abacus Trainer only for advanced students?",
+      "answer": "No, the app is suitable for both beginners and advanced learners. New students can start with simple two-digit sums and guided practice, while experienced learners can explore multi-digit decimals, complex patterns, and timed challenges tailored to their current level."
+    },
+    {
+      "question": "Can Abacus Trainer be used alongside regular abacus classes?",
+      "answer": "Yes, Abacus Trainer is designed to complement existing abacus classes and coaching programs. Students can practice between classes, teachers can track performance remotely, and parents can see how consistently and effectively their child is practicing over time."
+    }
+  ],
+  "learning_and_practice_modes": [
+    {
+      "question": "What practice modes are available in Abacus Trainer?",
+      "answer": "Abacus Trainer offers multiple practice modes including Vocal Practice, Non-Vocal Practice, Focus Mode, Custom Practice, Timed Practice, and Skill Practice Mode. Each mode is crafted to train a different dimension of mental math, whether it is listening ability, speed, endurance, or deep conceptual understanding."
+    },
+    {
+      "question": "How does Vocal Practice work?",
+      "answer": "In Vocal Practice, numbers are spoken aloud using Text-to-Speech, and students must calculate mentally while listening instead of constantly looking at the screen. This builds strong concentration, number retention, and listening-based calculation skills, which closely simulate live classroom calling or competition environments."
+    },
+    {
+      "question": "What is Non-Vocal Practice used for?",
+      "answer": "Non-Vocal Practice displays numbers visually on the screen, allowing students to focus on silent calculation without audio. This is ideal when a quiet environment is required, or when learners prefer purely visual practice to strengthen visualization and abacus image recall."
+    },
+    {
+      "question": "How does Focus Mode help students?",
+      "answer": "Focus Mode is designed for distraction-free practice across multiple questions in a single session. The interface is kept clean, timers and prompts are controlled, and students can concentrate on solving a sequence of problems without interruptions, helping them build stamina and mental discipline."
+    },
+    {
+      "question": "What is Timed Practice?",
+      "answer": "Timed Practice lets students work under time pressure by setting a session duration or focusing on speed metrics such as time per question or prompts per minute. This mode is especially useful for exam preparation, competitions, and confidence building in fast-paced mental math scenarios."
+    },
+    {
+      "question": "Can I customize my own practice sessions?",
+      "answer": "Yes, Custom Practice allows you to choose settings like digit count, decimal places, patterns, carry complexity, and session duration. This flexibility makes it easy for teachers to assign specific drills and for students to target particular areas they want to improve."
+    }
+  ],
+  "skill_practice_and_operations": [
+    {
+      "question": "What is Sequential Skill Practice and why is it special?",
+      "answer": "Sequential Skill Practice is a unique mode where students work with a starting number and apply controlled positive or negative adjustments to reach target values. This method reinforces core abacus skills such as number complements, transitions, and adjustment logic in a structured, step-by-step way rather than through random sums."
+    },
+    {
+      "question": "How does fixed number skill practice work?",
+      "answer": "In fixed number skill practice, the app chooses or lets you set a base number, and each question applies an increment or decrement within a defined range, such as plus or minus 5 to 15. Students then calculate the new result each time, forming a chain of related problems that builds strong internal number sense and mental consistency."
+    },
+    {
+      "question": "What operation types are supported in Abacus Trainer?",
+      "answer": "Currently the app supports Add/Sub Mode and Skill Practice Mode, with multiplication and division practice planned for future releases. Add/Sub Mode covers traditional addition and subtraction practice, while Skill Practice Mode is optimized for foundational adjustment-based training using sequential number patterns."
+    },
+    {
+      "question": "Does Abacus Trainer support decimal-based practice?",
+      "answer": "Yes, the app supports calculations with one to three decimal places and uses proper floating-point precision under the hood. This allows learners to handle real-world numerical scenarios such as prices, measurements, and more advanced abacus operations involving decimal values."
+    },
+    {
+      "question": "Do students have to actually calculate answers or just choose options?",
+      "answer": "Students type their answers directly using a keypad rather than choosing from multiple-choice options. This ensures that they are genuinely doing the mental calculation each time, which leads to more reliable learning and better long-term skill retention."
+    }
+  ],
+  "ai_and_cognitive_insights": [
+    {
+      "question": "How does AI help in Abacus Trainer?",
+      "answer": "The AI in Abacus Trainer continuously analyzes previous practice sessions to understand how a student is performing in terms of accuracy, speed, error patterns, and consistency. Based on this, it suggests relevant practice areas, adjusts question difficulty, and offers insight into what the learner should focus on next to progress faster."
+    },
+    {
+      "question": "What are improvement area recommendations?",
+      "answer": "Improvement area recommendations are AI-generated suggestions that highlight specific skills or patterns where the student is struggling, such as certain digit ranges, decimal handling, or carry/borrow complexity. Instead of practicing randomly, learners can focus on these areas and see more meaningful improvement in less time."
+    },
+    {
+      "question": "What cognitive skills does Abacus Trainer track?",
+      "answer": "Abacus Trainer goes beyond marks and tracks cognitive factors like concentration, memory, visualization, and reaction time. These metrics help teachers and parents understand how the student is processing information, not just whether the final answer was right or wrong."
+    },
+    {
+      "question": "Does the AI require constant internet connectivity?",
+      "answer": "No, the AI is designed as an offline-first system and runs on-device using TensorFlow Lite models. This means students can get intelligent practice recommendations and analysis even without internet access, and data syncs when the device reconnects."
+    },
+    {
+      "question": "How do the machine learning models improve over time?",
+      "answer": "The app uses self-training models that update when enough new data is available, such as after a minimum number of attempts. Over time, the system becomes better at identifying patterns, predicting readiness for higher difficulty, and tailoring practice to each learner’s evolving performance."
+    }
+  ],
+  "analytics_and_progress_tracking": [
+    {
+      "question": "What kind of analytics does Abacus Trainer provide?",
+      "answer": "Abacus Trainer offers rich analytics including accuracy rates, speed metrics, efficiency scores, question counts, and session histories. It also provides granular breakdowns by digit count, decimal usage, carry complexity, and practice mode so that progress is visible from multiple angles."
+    },
+    {
+      "question": "How can students and parents view progress over time?",
+      "answer": "The app includes trend charts, progress graphs, and proficiency indicators that show how performance changes across days, weeks, and months. This makes it easy to see whether regular practice is paying off and which skills are stabilizing or still fluctuating."
+    },
+    {
+      "question": "What is the Statistics or Dashboard screen used for?",
+      "answer": "The Statistics or Dashboard screen acts as a central hub summarizing total sessions, questions answered, time spent, accuracy, efficiency, and key improvement areas. It gives a quick but meaningful snapshot of how the learner is doing without digging into every single session manually."
+    },
+    {
+      "question": "What is Granular Analytics in the app?",
+      "answer": "Granular Analytics provides a deeper view of performance by segmenting results based on factors like digit length, decimal places, and carry complexity. It helps identify subtle patterns, such as consistent difficulty with certain number lengths or more errors when decimals or multi-step carries are involved."
+    },
+    {
+      "question": "Can previous practice sessions be reviewed later?",
+      "answer": "Yes, the app stores session history so that students, teachers, and parents can revisit past practice. This allows everyone to compare earlier performance with recent improvement and understand whether targeted practice is truly closing the gaps."
+    },
+    {
+      "question": "What is step-by-step question review?",
+      "answer": "Step-by-step review lets students replay a solved question and see each stage of the calculation, including how the running total changes and where borrow or carry operations occur. This is extremely useful for diagnosing errors, reinforcing correct technique, and building confidence in the logic behind each answer."
+    }
+  ],
+  "audio_and_experience": [
+    {
+      "question": "How does Text-to-Speech (TTS) improve learning?",
+      "answer": "Text-to-Speech transforms numerical prompts into clear spoken audio, enabling listening-based mental math training. This simulates live calling during competitions or abacus classes, and helps students develop strong auditory processing and mental visualization skills that are difficult to build with static visuals alone."
+    },
+    {
+      "question": "Can I control how fast the audio speaks?",
+      "answer": "Yes, the app allows you to adjust speech rate and gap timing between numbers within a configurable range. This means beginners can slow the pace to understand clearly, while advanced learners can push the speed to challenge their reaction time and mental stamina."
+    },
+    {
+      "question": "Does the app support multiple languages for prompts?",
+      "answer": "The app leverages device-level Text-to-Speech engines, so multiple languages are supported depending on your TTS configuration. This makes it easier for learners to hear numbers in a familiar language while still building universal arithmetic skills."
+    }
+  ],
+  "gamification_and_motivation": [
+    {
+      "question": "How does Abacus Trainer keep students motivated?",
+      "answer": "Abacus Trainer uses gamification elements like achievements, streaks, stars, badges, and challenges to keep practice engaging. Instead of seeing practice as a chore, students experience it as a journey with visible milestones, rewards, and friendly competition."
+    },
+    {
+      "question": "What kind of achievements are available?",
+      "answer": "The app provides both one-time achievements, such as completing the first practice or reaching a specific accuracy, and recurring achievements for consistent habits like practicing at night or maintaining long streaks. These markers help students recognize their efforts beyond raw scores."
+    },
+    {
+      "question": "How do streaks work in Abacus Trainer?",
+      "answer": "Streaks track the number of consecutive days a student practices, encouraging regular engagement instead of short bursts of activity. When streaks get longer, they act as a subtle but powerful motivator to keep going and not break the chain."
+    },
+    {
+      "question": "What is the stars system used for?",
+      "answer": "Stars are visual tokens earned when teachers send encouragement messages to students. They show up on the student’s dashboard as a gentle reminder that someone is watching their progress and appreciating their effort, which can be very motivating for younger learners."
+    }
+  ],
+  "challenges_and_leaderboards": [
+    {
+      "question": "What are challenges in Abacus Trainer?",
+      "answer": "Challenges are structured practice events where specific settings like digit range, decimal usage, and time window are defined, and students compete within those boundaries. They are great for classroom activities, batch-level contests, or friendly peer competitions, making practice more exciting and goal-driven."
+    },
+    {
+      "question": "How do students join a challenge?",
+      "answer": "Students can join challenges using invite codes or links shared by teachers, friends, or organizers. Once joined, their performance in that configuration is automatically tracked and reflected on the corresponding challenge leaderboard."
+    },
+    {
+      "question": "How does the global leaderboard work?",
+      "answer": "The global leaderboard showcases the top-performing users based on a composite score that blends accuracy and efficiency. It highlights rank, name, questions answered, accuracy, efficiency, and score, giving a fair picture of performance without simply rewarding people who attempt more questions."
+    },
+    {
+      "question": "Can teachers manage or remove challenges?",
+      "answer": "Yes, challenge management tools allow creators to view active and past challenges, add participants, and delete completed challenges from their view for better organization. This helps teachers run repeated events without cluttering the interface with old data."
+    }
+  ],
+  "teachers_and_dashboard": [
+    {
+      "question": "How can teachers use Abacus Trainer in their classes?",
+      "answer": "Teachers can onboard students onto Abacus Trainer, assign practice through configuration suggestions or challenges, and then monitor each learner’s performance via the web dashboard. This reduces manual checking, gives objective data, and frees up classroom time for conceptual explanation instead of basic correction."
+    },
+    {
+      "question": "What does the teacher web dashboard provide?",
+      "answer": "The teacher dashboard offers a compact but powerful view of class performance with key metrics like average accuracy, efficiency, active students, and recent trends. Teachers can drill down into individual students to see detailed analytics, skill gaps, and progress across sessions."
+    },
+    {
+      "question": "Can teachers identify specific weak concepts using the app?",
+      "answer": "Yes, the system’s granular analytics and AI models highlight improvement areas such as difficulties with certain digit lengths, decimal operations, or carry-heavy problems. This enables teachers to plan targeted worksheets or focused in-class sessions instead of guessing where students might be struggling."
+    },
+    {
+      "question": "How do encouragement messages help in teaching?",
+      "answer": "Encouragement messages allow teachers to send quick, personalized notes to students recognizing effort or improvement. These messages generate stars on the student side, creating a positive reinforcement loop that builds confidence and maintains engagement between classes."
+    },
+    {
+      "question": "Can coaching centers use Abacus Trainer at scale?",
+      "answer": "Yes, coaching centers can manage multiple batches of students, monitor groups and individuals, and run structured challenges all from one ecosystem. This makes it easier to maintain consistency in training standards and track the effectiveness of their teaching programs."
+    }
+  ],
+  "parents_and_home_use": [
+    {
+      "question": "How can parents benefit from Abacus Trainer?",
+      "answer": "Parents get clear visibility into how often their child is practicing, how accurate they are, and whether speed and confidence are genuinely improving. Instead of relying on subjective feedback, they can see concrete metrics and trends, which makes conversations with teachers and children more meaningful."
+    },
+    {
+      "question": "Can parents use the app without technical knowledge?",
+      "answer": "Yes, the parent-facing parts of the app are designed to be intuitive and easy to navigate. Most data is presented as simple charts, color-coded cards, and clear labels so that parents can understand progress and areas of concern without needing any specialized technical background."
+    },
+    {
+      "question": "Does the app replace a real teacher?",
+      "answer": "Abacus Trainer is designed to support and amplify teaching, not to replace human teachers. It automates practice, tracking, and analytics so that teachers and parents can spend more time on explaining concepts, motivating children, and building broader learning habits."
+    }
+  ],
+  "technical_and_device_support": [
+    {
+      "question": "Which devices and Android versions does Abacus Trainer support?",
+      "answer": "Abacus Trainer supports Android 8.0 (API 26) and above, and works on a wide range of phones and tablets. For the smoothest experience, devices with more RAM, larger screens, and modern processors are recommended, especially when handling intensive practice or analytics views."
+    },
+    {
+      "question": "Is Abacus Trainer optimized for tablets?",
+      "answer": "Yes, the app includes layouts tailored specifically for tablets, including two-column designs and enhanced landscape mode. This allows more information to be visible at once, making it particularly comfortable for longer practice sessions and teacher demonstrations."
+    },
+    {
+      "question": "Does screen rotation affect practice sessions?",
+      "answer": "The app is built to handle orientation changes gracefully, preserving the current state during rotation. This means that switching between portrait and landscape modes should not interrupt ongoing sessions or cause loss of progress."
+    },
+    {
+      "question": "How much storage and memory does the app require?",
+      "answer": "The app is designed to be reasonably lightweight, but it still benefits from devices with at least 2 GB of RAM and sufficient free storage for local data, logs, and AI models. Higher-end devices will naturally offer smoother rendering, faster transitions, and more consistent performance."
+    }
+  ],
+  "security_and_privacy": [
+    {
+      "question": "How does Abacus Trainer protect user data?",
+      "answer": "Abacus Trainer uses secure local storage, encrypted communication channels, and carefully configured Firestore rules to protect user data. Only essential learning-related information is stored, and multiple safeguards are in place to prevent unauthorized access or misuse."
+    },
+    {
+      "question": "Does Abacus Trainer comply with children’s privacy regulations?",
+      "answer": "Yes, the app is designed with children’s privacy in mind and follows principles aligned with regulations such as COPPA. It minimizes data collection, avoids unnecessary personal identifiers, and uses data solely to power learning experiences and progress tracking."
+    },
+    {
+      "question": "Is my data shared with any third parties?",
+      "answer": "No, Abacus Trainer does not sell or share personal learning data with third-party services. All collected data is used only within the app’s ecosystem to improve practice quality, analytics accuracy, and the overall learning experience."
+    },
+    {
+      "question": "What measures are taken to prevent abuse or billing misuse?",
+      "answer": "The app uses restricted API keys, strict validation, and controlled sync mechanisms to prevent unauthorized or excessive usage that could trigger unexpected billing. Combined with security rules and defensive programming, this helps keep both user data and infrastructure safe."
+    }
+  ],
+  "getting_started_and_access": [
+    {
+      "question": "How do I get started with Abacus Trainer?",
+      "answer": "You can install the app from the Google Play Store, complete the basic setup, and choose a suitable practice mode to begin. Many users start with shorter sessions in Vocal or Non-Vocal practice before exploring more advanced modes like Skill Practice and Challenges."
+    },
+    {
+      "question": "Do I need an account to use the app?",
+      "answer": "Some features may be available in guest or local mode, but creating an account or using an access code unlocks full tracking, sync, and analytics. Accounts also enable teachers and parents to view consistent performance data across devices."
+    },
+    {
+      "question": "How do access codes work?",
+      "answer": "Access codes are typically provided by teachers, institutes, or partner programs and are used to unlock full or extended access for a defined period. This allows learning to remain structured and sustainable while controlling how AI and cloud resources are used."
+    },
+    {
+      "question": "Can I use the same account on multiple devices?",
+      "answer": "Yes, data can be synced across devices when signed in with the same account, allowing students to practice on different phones or tablets. Sync is designed to be efficient, and offline-first behavior ensures that local practice is still possible even without immediate connectivity."
+    }
+  ]
+}

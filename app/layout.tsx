@@ -5,7 +5,13 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import InviteBanner from '@/components/InviteBanner'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { CookieConsentProvider } from '@/contexts/CookieConsentContext'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
+import GoogleAnalytics from '@/components/GoogleAnalytics'
+import PageTracking from '@/components/PageTracking'
+import CookieConsentBanner from '@/components/CookieConsentBanner'
+import TawkTo from '@/components/TawkTo'
+import BackToTop from '@/components/BackToTop'
 
 const poppins = Poppins({
   weight: ['400', '600', '700', '800', '900'],
@@ -188,12 +194,19 @@ export default function RootLayout({
       </head>
       <body className={`${poppins.variable} ${nunito.variable} font-primary`}>
         <ErrorBoundary>
-          <AuthProvider>
-            <InviteBanner />
-            <Navbar />
-            {children}
-            <Footer />
-          </AuthProvider>
+          <CookieConsentProvider>
+            <GoogleAnalytics />
+            <AuthProvider>
+              <PageTracking />
+              <InviteBanner />
+              <Navbar />
+              {children}
+              <Footer />
+              <CookieConsentBanner />
+              <BackToTop />
+              <TawkTo />
+            </AuthProvider>
+          </CookieConsentProvider>
         </ErrorBoundary>
       </body>
     </html>

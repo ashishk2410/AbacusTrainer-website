@@ -17,6 +17,7 @@ export default function HomePage() {
 
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [openFAQItems, setOpenFAQItems] = useState<number[]>([]);
 
   useEffect(() => {
     // Handle smooth scrolling for anchor links
@@ -85,6 +86,14 @@ export default function HomePage() {
     if (lightboxIndex === null) return;
     setIsZoomed(false);
     setLightboxIndex((lightboxIndex + 1) % galleryImages.length);
+  };
+
+  const toggleFAQ = (index: number) => {
+    setOpenFAQItems(prev => 
+      prev.includes(index) 
+        ? prev.filter(i => i !== index)
+        : [...prev, index]
+    );
   };
 
   // Keyboard shortcuts for gallery (Esc to close, arrows to navigate)
@@ -566,6 +575,7 @@ export default function HomePage() {
                     <div className="plan-header">
                       <h3>Free Trial</h3>
                       <div className="price free-trial-price">(20 Days)</div>
+                      <p className="price-desc" style={{ visibility: 'hidden', height: '0', margin: '0' }}>&nbsp;</p>
                       <a href="https://play.google.com/store/apps/details?id=com.abacus.trainer" target="_blank" rel="noopener" className="btn btn-outline btn-small">Start Trial</a>
                     </div>
                   </th>
@@ -730,8 +740,8 @@ export default function HomePage() {
           </div>
           
           <div className="faq-container">
-            <div className="faq-item">
-              <div className="faq-question">
+            <div className={`faq-item ${openFAQItems.includes(0) ? 'active' : ''}`}>
+              <div className="faq-question" onClick={() => toggleFAQ(0)}>
                 <h3>What is Abacus Trainer?</h3>
                 <i className="fas fa-chevron-down"></i>
               </div>
@@ -740,8 +750,8 @@ export default function HomePage() {
               </div>
             </div>
             
-            <div className="faq-item">
-              <div className="faq-question">
+            <div className={`faq-item ${openFAQItems.includes(1) ? 'active' : ''}`}>
+              <div className="faq-question" onClick={() => toggleFAQ(1)}>
                 <h3>Who can use this app?</h3>
                 <i className="fas fa-chevron-down"></i>
               </div>
@@ -750,8 +760,8 @@ export default function HomePage() {
               </div>
             </div>
             
-            <div className="faq-item">
-              <div className="faq-question">
+            <div className={`faq-item ${openFAQItems.includes(2) ? 'active' : ''}`}>
+              <div className="faq-question" onClick={() => toggleFAQ(2)}>
                 <h3>Does the app work offline?</h3>
                 <i className="fas fa-chevron-down"></i>
               </div>
@@ -760,8 +770,8 @@ export default function HomePage() {
               </div>
             </div>
             
-            <div className="faq-item">
-              <div className="faq-question">
+            <div className={`faq-item ${openFAQItems.includes(3) ? 'active' : ''}`}>
+              <div className="faq-question" onClick={() => toggleFAQ(3)}>
                 <h3>Is there a free trial?</h3>
                 <i className="fas fa-chevron-down"></i>
               </div>

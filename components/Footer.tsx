@@ -39,8 +39,6 @@ export default function Footer() {
               <li><Link href="/blog">Blog</Link></li>
               <li><Link href="/faq">FAQ</Link></li>
               <li><a href="mailto:myabacustrainer@gmail.com">Contact Us</a></li>
-              <li><Link href="/privacy-policy">Privacy Policy</Link></li>
-              <li><Link href="/terms">Terms of Use</Link></li>
             </ul>
           </div>
           
@@ -62,6 +60,13 @@ export default function Footer() {
         
         <div className="footer-bottom">
           <p>&copy; 2025 Abacus Trainer. All rights reserved.</p>
+          <div className="footer-legal-links">
+            <Link href="/terms">Terms of Use</Link>
+            <span className="footer-separator">|</span>
+            <Link href="/privacy-policy">Privacy Policy</Link>
+            <span className="footer-separator">|</span>
+            <Link href="/privacy-policy#cookies">Cookie Notice</Link>
+          </div>
         </div>
       </div>
     </footer>

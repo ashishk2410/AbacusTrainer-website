@@ -114,8 +114,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         }}
       />
 
-      <div style={{ minHeight: '100vh', padding: '180px 0 40px', background: '#F9FAFB' }}>
-        <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
+      <div style={{ minHeight: '100vh', padding: '120px 0 80px', background: '#F9FAFB' }}>
+        <div className="container">
           {/* Back to Blog */}
           <div style={{ marginBottom: '2.5rem' }}>
             <Link
@@ -153,7 +153,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </div>
             )}
 
-            <div style={{ padding: '3.5rem 4rem' }}>
+            <div style={{ padding: '3rem 3.5rem' }}>
               {/* Post Meta */}
               <div style={{ 
                 marginBottom: '2rem', 

@@ -48,8 +48,8 @@ export default async function BlogPage({
   }
 
   return (
-    <div style={{ minHeight: '100vh', padding: '180px 0 40px', background: '#F9FAFB' }}>
-      <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
+    <div style={{ minHeight: '100vh', padding: '120px 0 80px', background: '#F9FAFB' }}>
+      <div className="container">
         {/* Blog Posts List */}
         {posts.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem', color: '#6B7280' }}>
@@ -58,12 +58,7 @@ export default async function BlogPage({
           </div>
         ) : (
           <>
-            <div className="blog-listing-grid" style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '2.5rem',
-              marginBottom: '5rem'
-            }}>
+            <div className="blog-listing-grid">
               {posts.map((post, index) => {
                 // Safety check - ensure post exists
                 if (!post) return null;
@@ -114,95 +109,34 @@ export default async function BlogPage({
                   const excerptText = postExcerpt || postContent || '';
                   const excerpt = getExcerpt(excerptText, 200);
 
+                // Use default image if no featured image
+                const displayImage = featuredImage || '/images/phone-mockup.png';
+                const cleanTitle = postTitle.replace(/<[^>]*>/g, '');
+
                 return (
-                  <article
+                  <Link
                     key={postId}
-                    className="blog-post-card"
-                    style={{
-                      background: 'white',
-                      borderRadius: '1rem',
-                      overflow: 'hidden',
-                      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
-                      transition: 'transform 0.2s, box-shadow 0.2s',
-                    }}
+                    href={`/blog/${postSlug}`}
+                    className="blog-post-card-link"
                   >
-                    {featuredImage && (
-                      <div style={{ width: '100%', height: '300px', overflow: 'hidden' }}>
+                    <article className="blog-post-card">
+                      <div className="blog-post-image">
                         <img
-                          src={featuredImage}
-                          alt={postTitle.replace(/<[^>]*>/g, '')}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                          }}
+                          src={displayImage}
+                          alt={cleanTitle}
                         />
                       </div>
-                    )}
-                    <div style={{ padding: '2rem 2.5rem' }}>
-                      <div style={{ 
-                        marginBottom: '1.5rem', 
-                        display: 'flex', 
-                        gap: '1rem', 
-                        alignItems: 'center', 
-                        fontSize: '0.875rem', 
-                        color: '#6B7280',
-                        fontFamily: 'var(--font-primary)',
-                        lineHeight: '1.6',
-                        fontWeight: 400
-                      }}>
-                        <span>{formatDate(postDate)}</span>
-                        {author && (
-                          <>
-                            <span style={{ color: '#D1D5DB' }}>•</span>
-                            <span>By {author}</span>
-                          </>
-                        )}
-                      </div>
-                      <h2 style={{ 
-                        fontSize: '1.625rem', 
-                        fontWeight: 700, 
-                        marginBottom: '1.5rem', 
-                        color: '#1F2937',
-                        fontFamily: 'var(--font-secondary)',
-                        lineHeight: '1.4',
-                        letterSpacing: '-0.01em'
-                      }}>
-                        <Link
-                          href={`/blog/${postSlug}`}
-                          style={{ color: 'inherit', textDecoration: 'none', transition: 'color 0.2s' }}
-                        >
+                      <div className="blog-post-content-wrapper">
+                        <h2 className="blog-post-title">
                           <span dangerouslySetInnerHTML={{ __html: postTitle }} />
-                        </Link>
-                      </h2>
-                      <div
-                        style={{
-                          color: '#4B5563',
-                          lineHeight: '1.75',
-                          marginBottom: '2rem',
-                          fontSize: '1rem',
-                          fontFamily: 'var(--font-primary)',
-                          fontWeight: 400
-                        }}
-                        dangerouslySetInnerHTML={{ __html: excerpt }}
-                      />
-                      <Link
-                        href={`/blog/${postSlug}`}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.5rem',
-                          color: '#6366f1',
-                          fontWeight: 600,
-                          textDecoration: 'none',
-                          fontSize: '1rem',
-                        }}
-                      >
-                        Read more
-                        <i className="fas fa-arrow-right" style={{ fontSize: '0.875rem' }}></i>
-                      </Link>
-                    </div>
-                  </article>
+                        </h2>
+                        <div
+                          className="blog-post-excerpt"
+                          dangerouslySetInnerHTML={{ __html: excerpt }}
+                        />
+                      </div>
+                    </article>
+                  </Link>
                 );
                 } catch (postError) {
                   // Log error but don't break the page - return null for this post
