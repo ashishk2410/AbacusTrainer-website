@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import Script from 'next/script'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { GA_TRACKING_ID, pageview } from '@/lib/analytics'
 import { useCookieConsent } from '@/contexts/CookieConsentContext'
 
-export default function GoogleAnalytics() {
+function GoogleAnalyticsInner() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const { consent } = useCookieConsent()
@@ -87,6 +87,14 @@ export default function GoogleAnalytics() {
         }}
       />
     </>
+  )
+}
+
+export default function GoogleAnalytics() {
+  return (
+    <Suspense fallback={null}>
+      <GoogleAnalyticsInner />
+    </Suspense>
   )
 }
 
